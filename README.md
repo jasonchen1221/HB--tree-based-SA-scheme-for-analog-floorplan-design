@@ -2,7 +2,7 @@
 
 
 ## Basic Information
-Repository & URL: [jasonchen1221](https://github.com/jasonchen1221) for [HB*-tree based SA scheme for analog floorplan design: ](https://github.com/jasonchen1221/...)
+Repository & URL: [jasonchen1221](https://github.com/jasonchen1221) for [HB*-tree based SA scheme for analog floorplan design](https://github.com/jasonchen1221/HB--tree-based-SA-scheme-for-analog-floorplan-design.git)
 
 As far as I know, in modern VLSI circuit design, layout synthesis of digital circuit design(automated placement and routing) have developed quite maturely. However, the layout synthesis technique of analog circuit layout is far less than that of digital circuits, and most of them are still customized manually by professional layout person. 
 
@@ -13,8 +13,7 @@ Therefore, it is important to handle the symmetrical modules and non-symmetrical
 I did some researches and found that there are some works dedicated to this area. So I want to try this topic and apply what I have learned in class.
 
 The example picture shown below(reference from [1]) is a resulting placement of biasynth_2p4g with three symmetry group(with 64 modules, including 25 symmetric modules).
-.. image:: img/example.png
-
+![This is a alt text.](/img/example.png "example")
 
 ## Problem to Solve
 ### Goal
@@ -52,7 +51,7 @@ Analog circuit designer, layout designer.
 
 ## System Architecture
 ### Flow Chart
-.. image:: img/workflow.png
+![This is a alt text.](/img/workflow.png "flow chart")
 
 1. Inputs
     1. Alpha value
