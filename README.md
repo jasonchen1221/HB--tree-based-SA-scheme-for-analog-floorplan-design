@@ -3,7 +3,7 @@
 
 ## Basic Information
 Repository & URL: [jasonchen1221](https://github.com/jasonchen1221) for [HB*-tree based SA scheme for analog floorplan design](https://github.com/jasonchen1221/HB--tree-based-SA-scheme-for-analog-floorplan-design.git)
-
+ 
 As far as I know, in modern VLSI circuit design, layout synthesis of digital circuit design(automated placement and routing) have developed quite maturely. However, the layout synthesis technique of analog circuit layout is far less than that of digital circuits, and most of them are still customized manually by professional layout person. 
 
 The professional layout engineer focus on reduce the effects of parasitic mismatched and circuit sensitivity to process variations for analog circuits. Some pairs of modules need to be placed symmetrically with respect to common axis for better electrical properties. Therefore, if they lack some good reference topologies and their corresponding toatal area and total wirelength to refer to, it will cost a lot of time for analog layout topology design.
@@ -110,6 +110,6 @@ Analog circuit designer, layout designer.
 * Overflown work. 
 
 ## References
-* [1] [Analog Placement Based on Symmetry Island Formulation](https://ieeexplore-ieee-org.ezproxy.lib.nctu.edu.tw/document/4957593)
-* [2] [B*-Trees: A New Representation for Non-Slicing Floorplans](https://ieeexplore-ieee-org.ezproxy.lib.nctu.edu.tw/document/855354)
+* [1] [Analog Placement Based on Symmetry Island Formulation - by Po-Hung Lin](https://ieeexplore-ieee-org.ezproxy.lib.nctu.edu.tw/document/4957593)
+* [2] [B*-Trees: A New Representation for Non-Slicing Floorplans - by Yun-Chih Chang](https://ieeexplore-ieee-org.ezproxy.lib.nctu.edu.tw/document/855354)
 
