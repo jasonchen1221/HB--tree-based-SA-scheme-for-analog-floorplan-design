@@ -13,7 +13,7 @@ Therefore, it is important to handle the symmetrical modules and non-symmetrical
 I did some researches and found that there are some works dedicated to this area. So I want to try this topic and apply what I have learned in class.
 
 The example picture shown below(reference from [1]) is a resulting placement of biasynth_2p4g with three symmetry group(with 64 modules, including 25 symmetric modules).
-![This is a alt text.](/img/example.png "example")
+![](https://i.imgur.com/dHend78.png)
 
 ## Problem to Solve
 ### Goal
@@ -51,7 +51,7 @@ Analog circuit designer, layout designer.
 
 ## System Architecture
 ### Flow Chart
-![This is a alt text.](/img/workflow.png "flow chart")
+![](https://i.imgur.com/otG0uNf.png)
 
 1. Inputs
     1. Alpha value
