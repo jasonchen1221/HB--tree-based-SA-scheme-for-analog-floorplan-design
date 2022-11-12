@@ -13,7 +13,7 @@ public:
     Block();
     ~Block(){}
 
-    // setter & getter
+    /* setter & getter */ 
     void setName(std::string s) { m_name = s; }
     void setX(double x)         { m_x = x; }
     void setY(double y)         { m_y = y; }
@@ -41,13 +41,13 @@ public:
     Block* getLeft()      const { return m_pLeft; }
     Block* getRight()     const { return m_pRight; }
 
-    // member functions
+    /* member functions */ 
     void laydown();
     void standup();
-    void swapXY();
     void rotate();
+    void rotateXY();
 
-    // info display & check
+    /* info display & check */ 
     friend std::ostream& operator<<(std::ostream& os, const Block& blk);
     void displayPLR() const;    // Parent, Left, Right
 
