@@ -90,9 +90,9 @@ enum E_DeviceType {UNKNOWN_TYPE, NMOS, PMOS, RESISTOR, CAPACITOR};
 class FloorPlanner;
 
 class Block;
-class BlockV;
+//class BlockV;
 class Pin;
-class PinV;
+//class PinV;
 class Net;
 
 class BTree;
