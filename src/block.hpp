@@ -7,7 +7,7 @@
 
 class Block{
     friend class BTree;
-    friend class FloorPlanner;
+    friend class Placer;
 
 public:
     Block();

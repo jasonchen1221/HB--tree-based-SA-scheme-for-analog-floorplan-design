@@ -6,7 +6,7 @@
 #include <limits>
 
 class Net{
-    friend class FloorPlanner;
+    friend class Placer;
 
 public:
     Net();

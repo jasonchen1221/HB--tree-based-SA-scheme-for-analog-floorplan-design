@@ -87,7 +87,7 @@ enum E_ConstraintType {UNDEFINED_TYPE, SYMMETRY, SELF};
 enum E_DeviceType {UNKNOWN_TYPE, NMOS, PMOS, RESISTOR, CAPACITOR};
 
 /* Class Declaration */
-class FloorPlanner;
+class Placer;
 
 class Block;
 //class BlockV;
