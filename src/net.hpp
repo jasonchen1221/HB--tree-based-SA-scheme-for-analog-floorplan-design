@@ -10,17 +10,22 @@ class Net{
 
 public:
     Net();
-    ~Net() {};
+    ~Net(){ }
     
     /* member functions */ 
     void addBlk(Block b);
     void addPin(Pin p);
     double getThisNetHPWL();
 
+    void setNetName(std::string s) { m_name = s; }
+    std::string getNetName() const { return m_name; }
+
     /* info display & check */
     friend std::ostream& operator<<(std::ostream& os, const Net& net);
 
 private:
+    std::string m_name;
+    
     std::vector<Block> m_vBlks;
     std::vector<Pin>   m_vPins;
     double minX = std::numeric_limits<double>::max();

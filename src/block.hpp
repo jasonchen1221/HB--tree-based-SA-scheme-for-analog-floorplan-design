@@ -11,7 +11,7 @@ class Block{
 
 public:
     Block();
-    ~Block(){}
+    ~Block(){ }
 
     /* setter & getter */ 
     void setName(std::string s) { m_name = s; }
@@ -83,5 +83,8 @@ private:
     std::vector<Contour> m_vVLContour;
     std::vector<Contour> m_vBotContour;
 };
+
+
+
 
 #endif  //BLOCK_HPP

@@ -6,8 +6,8 @@
 
 class Pin{
 public:
-    Pin(): m_name("undefined_name"), m_x(0.0), m_y(0.0) {}
-    ~Pin();
+    Pin(): m_name("undefined_name"), m_x(0.0), m_y(0.0) { }
+    ~Pin() { }
 
     /* setter & getter */
     void setName(std::string s) { m_name = s; }
@@ -29,5 +29,6 @@ private:
     double      m_x;
     double      m_y;
 };
+
 
 #endif  //PIN_HPP
