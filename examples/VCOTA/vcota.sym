@@ -1,0 +1,77 @@
+constraint_start
+Priority: 0
+Type: symmetry
+Axis: G1
+Members: NM6 NM7
+constraint_end
+
+constraint_start
+Priority: 0
+Type: symmetry
+Axis: G1
+Members: NM0 NM1
+constraint_end
+
+constraint_start
+Priority: 0
+Type: self
+Axis: G1
+Members: NM8
+constraint_end
+
+constraint_start
+Priority: 0
+Type: self
+Axis: G1
+Members: NM4
+constraint_end
+
+constraint_start
+Priority: 0
+Type: symmetry
+Axis: G2
+Members: M3 M0
+constraint_end
+
+constraint_start
+Priority: 0
+Type: symmetry
+Axis: G2
+Members: M2 M1
+constraint_end
+
+constraint_start
+Priority: 0
+Type: self
+Axis: G2
+Members: M4.
+constraint_end
+
+constraint_start
+Priority: 0
+Type: symmetry
+Axis: G2
+Members: M6 M5
+constraint_end
+
+constraint_start
+Priority: 1
+Type: self
+Axis: G3
+Members: G1
+constraint_end
+
+constraint_start
+Priority: 1
+Type: self
+Axis: G3
+Members: G2
+constraint_end
+
+constraint_start
+Priority: 2
+Type: self
+Axis: G4
+Members: G3
+constraint_end
+

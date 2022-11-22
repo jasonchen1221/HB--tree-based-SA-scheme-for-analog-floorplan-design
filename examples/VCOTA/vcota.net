@@ -1,0 +1,52 @@
+NumNets: 9
+NetName: net_1
+NetDegree: 8
+VDD
+M0
+M1
+M2
+M3
+M4.
+NM6
+NM7
+NetName: net_2
+NetDegree: 3
+M1
+NM0
+M0
+NetName: net_3
+NetDegree: 3
+M2
+M3
+NM1
+NetName: net_4
+NetDegree: 4
+NM0
+M6
+NM7
+NM8
+NetName: net_5
+NetDegree: 4
+NM1
+M5
+NM6
+NM8
+NetName: net_6
+NetDegree: 3
+M4.
+M5
+M6
+NetName: net_7
+NetDegree: 2
+M5
+NM7
+NetName: net_8
+NetDegree: 3
+M0
+NM4
+M3
+NetName: net_9
+NetDegree: 3
+GND
+NM4
+NM8
