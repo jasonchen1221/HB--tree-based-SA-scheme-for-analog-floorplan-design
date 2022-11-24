@@ -426,6 +426,12 @@ bool Placer::parseGrpFile(std::string grpFile, bool verbose){
             }
         }
 
+        std::cout << "==================m_level(record priority)==================" << std::endl;
+        std::cout << "Size: " << m_level.size() << std::endl;
+        for(auto iter = m_level.begin(); iter != m_level.end(); ++iter){
+            std::cout << *iter << std::endl;
+        }
+
         std::cout << "==================m_levelMap(SELF)==================" << std::endl;
         std::cout << "Size: " << m_levelMap.size() << std::endl;
         for(auto iter = m_levelMap.begin(); iter != m_levelMap.end(); ++iter){
