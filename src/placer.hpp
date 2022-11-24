@@ -12,15 +12,30 @@
 
 class Placer{
 public:
-    Placer()  {}
-    ~Placer() {} 
+    Placer(){
+        
+    }
+    ~Placer(){
 
-    /* Parsers */
+    } 
+
+/* Parsers */
     void parseAll(std::string alpha, std::string blkFile, std::string netFile, std::string grpFile);
     bool parseAlpha(std::string alpha, bool verbose);
     bool parseBlkFile(std::string blkFile, bool verbose);
     bool parseNetFile(std::string netFile, bool verbose);
     bool parseGrpFile(std::string grpFile, bool verbose);
+/* Device Generation, LOD Minimization */
+    void genDevice();
+    void minimizeLOD();
+    void insertDummy();
+    void determineSize();
+    double m_LAnorm;
+    double mobRelChangeFunc_PMOS(double SA, double NF, double FW, double SD, double LDrawn);
+    double mobRelChangeFunc_NMOS(double SA, double NF, double FW, double SD, double LDrawn);
+    double getLODCost(double FW, double NFIN, double mobRelChan, double mobRelChanRef, double SD, double LDrawn);
+    double m_delta;
+
 
 private:
 /* alpha */
@@ -44,8 +59,8 @@ private:
 
 /* Level */
     std::set<int> m_level;
-    std::map<std::string, std::vector<std::string>> m_levelMap;
-    std::map<std::string, std::vector<std::pair<std::string,std::string>>> m_levelMapPair;
+    std::map<std::string, std::vector<std::string>> m_levelMap; //SELF 
+    std::map<std::string, std::vector<std::pair<std::string,std::string>>> m_levelMapPair;  //SYMMETRY
 
 /* Help Functions */
     void splitString(std::string str, std::vector<std::string>& vec);

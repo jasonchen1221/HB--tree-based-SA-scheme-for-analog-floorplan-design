@@ -3,7 +3,7 @@ EXE = PLACE.exe
 
 CFLAGS = -g -Wall -O3
 
-OBJS = main.o block.o net.o parser.o
+OBJS = main.o block.o net.o parser.o genDevice.o
 
 HEADERS = placer.hpp globalParam.hpp block.hpp \
           net.hpp pin.hpp parser.hpp
