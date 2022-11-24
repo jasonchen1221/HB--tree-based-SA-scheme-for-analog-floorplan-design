@@ -29,57 +29,57 @@ const int    INIT               = 0;
 const double RING_SPACING       = 0.0;
 
 /* Stress Parameters */
-const double SA                 = 0.0;
-const double SA_REF             = 0.0;
-const double MIN_NF             = 0.0;
-const double MAX_SD             = 0.0;
-const double TNOM               = 0.0;
-const double TEMP               = 0.0;
+const double SA                 = 0.1750;   // left diffusion length
+const double SA_REF             = 0.405;    // left diffusion length from PDK
+const double MIN_NF             = 0.12;     // minumum # transistor_width/NF
+const double MAX_SD             = 0.32;      // maxinum poly-to-poly spacing
+const double TNOM               = 25.0;
+const double TEMP               = 25.0;
 
 const double TWPE               = 0.0;
 const double SC_REF             = 0.0;
 
 /* NMOS */
-const double N_u0               = 0.0;
-const double N_lkuo             = 0.0;
-const double N_xl               = 0.0;
-const double N_llodkuo          = 0.0;
-const double N_wkuo             = 0.0;
-const double N_xw               = 0.0;
+const double N_u0               = 0.05282;
+const double N_lkuo             = 2.2 * 1.0e-07;
+const double N_xl               = -1.46 * 1.0e-08;
+const double N_llodkuo          = 1.0;
+const double N_wkuo             = 1.2 * 1.0e-07;
+const double N_xw               = 1.6e-08;
 const double N_wlod             = 0.0;
-const double N_wlodkuo          = 0.0;
+const double N_wlodkuo          = 1.0;
 const double N_pkvto            = 0.0;
 const double N_tkuo             = 0.0;
-const double N_kuo              = 0.0;
-const double N_kuowe            = 0.0;
-const double N_lkvto            = 0.0;
-const double N_llodkvto         = 0.0;
-const double N_wkvto            = 0.0;
-const double N_wlodkvto         = 0.0;
-const double N_eta              = 0.0;
-const double N_alpha            = 0.0;
-const double N_beta             = 0.0;
+const double N_kuo              = -2.9e-08;
+const double N_kuowe            = -0.0022;
+const double N_lkvto            = -0.4e-8;
+const double N_llodkvto         = 1.0;
+const double N_wkvto            = 5e-8;
+const double N_wlodkvto         = 1.0;
+const double N_eta              = 1.03;
+const double N_alpha            = 0.076;
+const double N_beta             = 0.48;
 
 /* PMOS */
-const double P_u0               = 0.0;
-const double P_lkuo             = 0.0;
-const double P_xl               = 0.0;
-const double P_llodkuo          = 0.0;
+const double P_u0               = 0.0165;
+const double P_lkuo             = -4.005 * 1.0e-08 ;
+const double P_xl               = -1.09 * 1.0e-08;
+const double P_llodkuo          = 1.0;
 const double P_wkuo             = 0.0;
-const double P_xw               = 0.0;
+const double P_xw               = 1.6 * 1.0e-08;
 const double P_wlod             = 0.0;
-const double P_wlodkuo          = 0.0;
-const double P_kvtho            = 0.0;
+const double P_wlodkuo          = 1.0;
+const double P_kvtho            = -1.00 * 1e-17;
 const double P_tkuo             = 0.0;
-const double P_kuo              = 0.0;
-const double P_kuowe            = 0.0;
-const double P_lkvto            = 0.0;
-const double P_llodkvto         = 0.0;
+const double P_kuo              = -5.354 * 1e-10;
+const double P_kuowe            = -0.0127;
+const double P_lkvto            = -4.33e-8;
+const double P_llodkvto         = 1.0;
 const double P_wkvto            = 0.0;
-const double P_wlodkvto         = 0.0;
-const double P_eta              = 0.0;
-const double P_alpha            = 0.0;
-const double P_beta             = 0.0;
+const double P_wlodkvto         = 1.0;
+const double P_eta              = 0.49;
+const double P_alpha            = 0.48;
+const double P_beta             = 0.59;
 
 /* Constraint Types */
 enum E_ConstraintType {UNDEFINED_TYPE, SYMMETRY, SELF};
