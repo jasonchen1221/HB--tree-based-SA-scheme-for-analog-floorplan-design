@@ -1,5 +1,5 @@
 CXX = g++
-EXE = PLACE.exe
+EXE = LDEPlace.exe
 
 CFLAGS = -g -Wall -O3
 
