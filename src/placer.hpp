@@ -9,11 +9,23 @@
 #include <set>
 #include <map>
 #include <unordered_map>
+#include <float.h>
 
 class Placer{
 public:
     Placer(){
-        
+        m_Temp = T_INIT;
+        m_P = P_INIT;
+        //m_Cost = 0.0;
+        m_LODCost = DBL_MAX_EXP;
+        //m_Anorm = m_Wnorm = 1.0;
+        m_deltaCost = 0;
+        //
+        //
+        //
+        //
+        //
+        //
     }
     ~Placer(){
 
@@ -27,15 +39,33 @@ public:
     bool parseGrpFile(std::string grpFile, bool verbose);
 /* Device Generation, LOD Minimization */
     void genDevice();
-    void minimizeLOD();
+    void minimizeLOD(bool verbose);
     void insertDummy();
     void determineSize();
+    void showGenDeviceInfo(bool verbose, std::string flag);
+
     double m_LAnorm;
     double mobRelChangeFunc_PMOS(double SA, double NF, double FW, double SD, double LDrawn);
     double mobRelChangeFunc_NMOS(double SA, double NF, double FW, double SD, double LDrawn);
     double getLODCost(double FW, double NFIN, double mobRelChan, double mobRelChanRef, double SD, double LDrawn);
-    double m_delta;
+    double m_LODCost;
 
+    void mergeSymConstraint();
+    void interWellPlaceModules();
+
+/* SA */
+    double updateT(int iter);
+    double m_deltaCost;
+    double m_P;
+    double m_C;
+    double m_Temp;
+    double m_Temp1;
+    double m_deltaCostCnt;
+    double m_deltaSum;
+    double m_K;
+    double m_L;
+    double m_N;
+    double m_I; // # of iter upper bound
 
 private:
 /* alpha */
