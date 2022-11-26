@@ -27,6 +27,8 @@ void Placer::parseAll(std::string alpha, std::string blkFile, std::string netFil
 
 }
 
+
+
 bool Placer::parseAlpha(std::string alpha, bool verbose){
     m_alpha = std::stod(alpha);
     if(m_alpha < 0 || m_alpha >= 1){
