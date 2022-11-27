@@ -3,7 +3,8 @@ EXE = LDEPlace.exe
 
 CFLAGS = -g -Wall -O3
 
-OBJS = main.o block.o net.o parser.o genDevice.o
+OBJS = main.o block.o net.o parser.o setDevice.o \
+	   placer.o
 
 HEADERS = placer.hpp globalParam.hpp block.hpp \
           net.hpp pin.hpp parser.hpp

@@ -16,7 +16,9 @@ int main(int argc, char* argv[]){
         placer.parseNetFile(argv[3], false);
         placer.parseGrpFile(argv[4], false);
     
-    placer.genDevice();
+    placer.setDevice();
+    placer.constructTree();
+
 
     return 0;
 }
