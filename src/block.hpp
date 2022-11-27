@@ -78,10 +78,10 @@ private:
     bool                 m_isSelf;
     bool                 m_isContour;
     
-    std::vector<Block>   m_vModuleList;
-    std::vector<Block>   m_vHLContour;
-    std::vector<Contour> m_vVLContour;
-    std::vector<Contour> m_vBotContour;
+    std::vector<Block*>   m_vModuleList;
+    std::vector<Block*>   m_vHLContour;
+    std::vector<Contour*> m_vVLContour;
+    std::vector<Contour*> m_vBotContour;
 };
 
 

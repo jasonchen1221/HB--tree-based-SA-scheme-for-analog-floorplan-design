@@ -13,8 +13,8 @@ public:
     ~Net(){ }
     
     /* member functions */ 
-    void addBlk(Block b);
-    void addPin(Pin p);
+    void addBlk(Block* b);
+    void addPin(Pin* p);
     double getThisNetHPWL();
 
     void setNetName(std::string s) { m_name = s; }
@@ -26,8 +26,8 @@ public:
 private:
     std::string m_name;
     
-    std::vector<Block> m_vBlks;
-    std::vector<Pin>   m_vPins;
+    std::vector<Block*> m_vBlks;
+    std::vector<Pin*>   m_vPins;
     double minX = std::numeric_limits<double>::max();
     double maxX = std::numeric_limits<double>::lowest();
     double minY = std::numeric_limits<double>::max();
