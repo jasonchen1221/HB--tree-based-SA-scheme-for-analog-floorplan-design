@@ -28,7 +28,7 @@ public:
         //
     }
     ~Placer(){
-
+        clearLists();
     } 
 
 /* Parsers */
@@ -37,12 +37,12 @@ public:
     bool parseBlkFile(std::string blkFile, bool verbose);
     bool parseNetFile(std::string netFile, bool verbose);
     bool parseGrpFile(std::string grpFile, bool verbose);
-/* Device Generation, LOD Minimization */
-    void genDevice();
+/* Device settings (LOD Minimization) */
+    void setDevice();
     void minimizeLOD(bool verbose);
     void insertDummy();
     void determineSize();
-    void showGenDeviceInfo(bool verbose, std::string flag);
+    void showInfo(bool verbose, std::string flag);
 
     double m_LAnorm;
     double mobRelChangeFunc_PMOS(double SA, double NF, double FW, double SD, double LDrawn);
@@ -67,6 +67,13 @@ public:
     double m_N;
     double m_I; // # of iter upper bound
 
+/* Placer */
+    void clearLists();
+    void constructTree();
+    void setSymmetryChild();
+    void mergeSymmetryConstraint();
+
+
 private:
 /* alpha */
     double m_alpha;
@@ -74,18 +81,18 @@ private:
     double m_outlineW;
     double m_outlineH;
 /* Block */
-    std::vector<Block> m_vBlockList;
+    std::vector<Block*> m_vBlockList;
     //HashSet<BlockV> m_BlockHash;
-    std::unordered_map<std::string, Block> m_BlockHash;
-    std::vector<Block> m_mainBlockList;
+    std::unordered_map<std::string, Block*> m_BlockHash;
+    std::vector<Block*> m_mainBlockList;
 /* Net */
-    std::vector<Net> m_vNetList;
+    std::vector<Net*> m_vNetList;
 /* Pin */
-    std::vector<Pin> m_vPinList;
+    std::vector<Pin*> m_vPinList;
     //HashSet<PinV> m_PinHash;
-    std::unordered_map<std::string, Pin> m_PinHash;
+    std::unordered_map<std::string, Pin*> m_PinHash;
 /* Constraints */
-    std::vector<std::vector<Block>> m_vConstraints;
+    std::vector<std::vector<Block*>> m_vConstraints;
 
 /* Level */
     std::set<int> m_level;
