@@ -1,10 +1,11 @@
 #include "placer.hpp"
 #include <cmath>
 
-void Placer::genDevice(){
+void Placer::setDevice(){
     // mobility miltiplier of LOD -> 1
     // eq(7), eq(8), eq(9)
-    minimizeLOD(true);
+    minimizeLOD(false);  //set SD(poly-to-poly spaceing) & NF(#of fingers)
+    
     // to ensure better mathcing and further LOD minumization
     insertDummy();
 
@@ -16,31 +17,30 @@ void Placer::genDevice(){
     double Kstress_u0 = a + b + c;
 
     determineSize();
-    showGenDeviceInfo(true, "After Determin Size");
+    showInfo(false, "After Determine Size");
     
-
 }
 
 void Placer::minimizeLOD(bool verbose){
     
     if(verbose){
-        std::cout << "******************Before Device Gen******************" << std::endl;
+        std::cout << "******************Before Device Setting******************" << std::endl;
         std::cout << "==================m_vConstraints==================" << std::endl;
         std::cout << "Size(# of priority): " << m_vConstraints.size() << std::endl;
         for(int i = 0; i < m_vConstraints.size(); ++i){
             std::cout << "----------------Priority i = " << i << "----------------" << std::endl;
             std::cout << "Priority:"<< i <<", # of moudle have this priority: " << m_vConstraints[i].size() << std::endl;
             for(int j = 0; j < m_vConstraints[i].size(); ++j){
-                std::cout << "---module name: " << m_vConstraints[i][j].getName() << "---" << std::endl;
+                std::cout << "---module name: " << m_vConstraints[i][j]->getName() << "---" << std::endl;
                 std::cout << "This module's m_vModuleList size: ";
-                std::cout << m_vConstraints[i][j].m_vModuleList.size() << std::endl;
+                std::cout << m_vConstraints[i][j]->m_vModuleList.size() << std::endl;
                 std::cout << "m_vModuleList: " << std::endl;
-                for(int k = 0; k < m_vConstraints[i][j].m_vModuleList.size(); ++k){
-                    std::cout << "Block Name: " << m_vConstraints[i][j].m_vModuleList[k].getName() << std::endl;
-                    std::cout << "W_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getWDrawn() << std::endl;
-                    std::cout << "L_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getLDrawn() << std::endl;
-                    std::cout << "N Fin: " << m_vConstraints[i][j].m_vModuleList[k].getNFin() << std::endl;
-                    std::cout << "SD: " << m_vConstraints[i][j].m_vModuleList[k].getSD() << std::endl;
+                for(int k = 0; k < m_vConstraints[i][j]->m_vModuleList.size(); ++k){
+                    std::cout << "Block Name: " << m_vConstraints[i][j]->m_vModuleList[k]->getName() << std::endl;
+                    std::cout << "W_Drawn: " << m_vConstraints[i][j]->m_vModuleList[k]->getWDrawn() << std::endl;
+                    std::cout << "L_Drawn: " << m_vConstraints[i][j]->m_vModuleList[k]->getLDrawn() << std::endl;
+                    std::cout << "N Fin: " << m_vConstraints[i][j]->m_vModuleList[k]->getNFin() << std::endl;
+                    std::cout << "SD: " << m_vConstraints[i][j]->m_vModuleList[k]->getSD() << std::endl;
                 }
             }
         }
@@ -48,11 +48,11 @@ void Placer::minimizeLOD(bool verbose){
         std::cout << "==================m_mainBlockList==================" << std::endl;
         std::cout << "Size: " << m_mainBlockList.size() << std::endl;
         for(int i = 0; i < m_mainBlockList.size(); ++i){
-            std::cout << m_mainBlockList[i].getName() << std::endl;
-            std::cout << "W_Drawn: " << m_mainBlockList[i].getWDrawn() << std::endl;
-            std::cout << "L_Drawn: " << m_mainBlockList[i].getLDrawn() << std::endl;
-            std::cout << "N Fin: " << m_mainBlockList[i].getNFin() << std::endl;
-            std::cout << "SD: " << m_mainBlockList[i].getSD() << std::endl;
+            std::cout << m_mainBlockList[i]->getName() << std::endl;
+            std::cout << "W_Drawn: " << m_mainBlockList[i]->getWDrawn() << std::endl;
+            std::cout << "L_Drawn: " << m_mainBlockList[i]->getLDrawn() << std::endl;
+            std::cout << "N Fin: " << m_mainBlockList[i]->getNFin() << std::endl;
+            std::cout << "SD: " << m_mainBlockList[i]->getSD() << std::endl;
         }
     }
     
@@ -60,11 +60,11 @@ void Placer::minimizeLOD(bool verbose){
     for(int p = 0; p < m_level.size() - 1; ++p){
         // w/ priority p, -> module list of m
         for(int m = 0; m < m_vConstraints[p].size(); ++m){
-            if(m_vConstraints[p][m].m_vModuleList.size() > 0){
+            if(m_vConstraints[p][m]->m_vModuleList.size() > 0){
                 // initial finger number
-                int NF = m_vConstraints[p][m].m_vModuleList[0].getNFin();
+                int NF = m_vConstraints[p][m]->m_vModuleList[0]->getNFin();
                 // transistor_width/NF
-                double FW = m_vConstraints[p][m].m_vModuleList[0].getWDrawn() / NF;
+                double FW = m_vConstraints[p][m]->m_vModuleList[0]->getWDrawn() / NF;
 
                 // Simulated Annealing
                 double sum = 0;
@@ -79,7 +79,7 @@ void Placer::minimizeLOD(bool verbose){
                 double totalNFin; 
                 double mobRelChan, mobRelChanRef;
 
-                double thisLdrawn = m_vConstraints[p][m].m_vModuleList[0].getLDrawn();
+                double thisLdrawn = m_vConstraints[p][m]->m_vModuleList[0]->getLDrawn();
                 // m_LAnorm is different by process
                 // @_@ estimate the width of device @_@
                 m_LAnorm = (2 * SA + NF * thisLdrawn + (NF-1) * 0.2 ) * FW;
@@ -87,11 +87,11 @@ void Placer::minimizeLOD(bool verbose){
 
                 while(FW > MIN_FW){
                     double SD = 0.2;    // initial poly-to-poly spacing
-                    totalNFin = NF + m_vConstraints[p][m].m_vModuleList[0].m_lde.DUM;
-                    double LDrawn = m_vConstraints[p][m].m_vModuleList[0].getLDrawn();
+                    totalNFin = NF + m_vConstraints[p][m]->m_vModuleList[0]->m_lde.DUM;
+                    double LDrawn = m_vConstraints[p][m]->m_vModuleList[0]->getLDrawn();
 
                     while(SD < MAX_SD){
-                        if(m_vConstraints[p][m].m_vModuleList[0].m_lde.eDeviceType == PMOS){
+                        if(m_vConstraints[p][m]->m_vModuleList[0]->m_lde.eDeviceType == PMOS){
                             mobRelChan    = mobRelChangeFunc_PMOS(SA * 1e-6, totalNFin, FW * 1e-6, SD * 1e-6, LDrawn * 1e-6);
                             mobRelChanRef = mobRelChangeFunc_PMOS(SA_REF * 1e-6, totalNFin, FW * 1e-6, SD * 1e-6, LDrawn * 1e-6);
                         }
@@ -112,7 +112,7 @@ void Placer::minimizeLOD(bool verbose){
                         SD = SD + 0.01;
                     }
                     NF++;
-                    FW = m_vConstraints[p][m].m_vModuleList[0].getWDrawn() / NF;
+                    FW = m_vConstraints[p][m]->m_vModuleList[0]->getWDrawn() / NF;
                 }
 
                 m_LAnorm = sum / n;
@@ -130,16 +130,16 @@ void Placer::minimizeLOD(bool verbose){
                     m_deltaCostCnt = 0;
                     m_deltaSum = 0;
 
-                    NF = m_vConstraints[p][m].m_vModuleList[0].getNFin();
-                    FW = m_vConstraints[p][m].m_vModuleList[0].getWDrawn() / NF;
+                    NF = m_vConstraints[p][m]->m_vModuleList[0]->getNFin();
+                    FW = m_vConstraints[p][m]->m_vModuleList[0]->getWDrawn() / NF;
                     while(FW > MIN_FW){
                         double _SD = 0.2;
-                        totalNFin = NF + m_vConstraints[p][m].m_vModuleList[0].m_lde.DUM;
-                        double _LDrawn = m_vConstraints[p][m].m_vModuleList[0].getLDrawn();
+                        totalNFin = NF + m_vConstraints[p][m]->m_vModuleList[0]->m_lde.DUM;
+                        double _LDrawn = m_vConstraints[p][m]->m_vModuleList[0]->getLDrawn();
 
                         double _SA = SA;
                         while( _SD <= MAX_SD ){
-                            if(m_vConstraints[p][m].m_vModuleList[0].m_lde.eDeviceType == PMOS){
+                            if(m_vConstraints[p][m]->m_vModuleList[0]->m_lde.eDeviceType == PMOS){
                                 mobRelChan    = mobRelChangeFunc_PMOS(_SA * 1e-6, totalNFin, FW * 1e-6, _SD * 1e-6, _LDrawn * 1e-6);
                                 mobRelChanRef = mobRelChangeFunc_PMOS(SA_REF * 1e-6, totalNFin, FW * 1e-6, _SD * 1e-6, _LDrawn * 1e-6);
                             }
@@ -151,9 +151,9 @@ void Placer::minimizeLOD(bool verbose){
                             m_deltaCost = getLODCost(FW, totalNFin, mobRelChan, mobRelChanRef, _SD, _LDrawn) - m_LODCost;
                             if(m_deltaCost <= 0){   //move to better 
                                 m_LODCost = getLODCost(FW, totalNFin, mobRelChan, mobRelChanRef, _SD, _LDrawn);
-                                m_vConstraints[p][m].m_vModuleList[0].setNFin(NF);
+                                m_vConstraints[p][m]->m_vModuleList[0]->setNFin(NF);
                                 if(NF > 1){
-                                    m_vConstraints[p][m].m_vModuleList[0].setSD(_SD);
+                                    m_vConstraints[p][m]->m_vModuleList[0]->setSD(_SD);
                                 }
                             }
                             _SD += 0.01;
@@ -161,15 +161,15 @@ void Placer::minimizeLOD(bool verbose){
                         NF++;
                         if(NF == 2) NF++;
                         if(NF % 2 != 0) NF++;
-                        FW = m_vConstraints[p][m].m_vModuleList[0].getWDrawn() / NF;
+                        FW = m_vConstraints[p][m]->m_vModuleList[0]->getWDrawn() / NF;
                     }
                     m_Temp = updateT(iter);
                     if(iter > 25) { break; }
                 }
 
-                if(m_vConstraints[p][m].m_constraint.eConstraintType == SYMMETRY){
-                    m_vConstraints[p][m].m_vModuleList[1].setNFin(m_vConstraints[p][m].m_vModuleList[0].getNFin());
-                    m_vConstraints[p][m].m_vModuleList[1].setSD(m_vConstraints[p][m].m_vModuleList[0].getSD());
+                if(m_vConstraints[p][m]->m_constraint.eConstraintType == SYMMETRY){
+                    m_vConstraints[p][m]->m_vModuleList[1]->setNFin(m_vConstraints[p][m]->m_vModuleList[0]->getNFin());
+                    m_vConstraints[p][m]->m_vModuleList[1]->setSD(m_vConstraints[p][m]->m_vModuleList[0]->getSD());
                 }
             }
         }
@@ -178,12 +178,12 @@ void Placer::minimizeLOD(bool verbose){
     for(int iter = 0; iter < m_mainBlockList.size(); ++iter){
         m_LODCost = DBL_MAX_EXP;
         double NF = 1;
-        double FW = m_mainBlockList[iter].getWDrawn() / NF;
+        double FW = m_mainBlockList[iter]->getWDrawn() / NF;
         double sum = 0;
         int n = 0;
 
-        double L_Drawn = m_mainBlockList[iter].getLDrawn();
-        double W_Drawn = m_mainBlockList[iter].getWDrawn();
+        double L_Drawn = m_mainBlockList[iter]->getLDrawn();
+        double W_Drawn = m_mainBlockList[iter]->getWDrawn();
 
         while(FW > MIN_FW){
             double _SD = 0.2;
@@ -196,7 +196,7 @@ void Placer::minimizeLOD(bool verbose){
             FW = W_Drawn / NF;
         }
         m_LAnorm = sum / n;
-        NF = m_mainBlockList[iter].getNFin();
+        NF = m_mainBlockList[iter]->getNFin();
         FW = W_Drawn / NF;
         while(FW > MIN_FW){
             double _SD = 0.2;
@@ -204,7 +204,7 @@ void Placer::minimizeLOD(bool verbose){
             double mobRelChan;
             double mobRelChanRef;
             while(_SD < MAX_SD){
-                if(m_mainBlockList[iter].m_lde.eDeviceType == PMOS){
+                if(m_mainBlockList[iter]->m_lde.eDeviceType == PMOS){
                     mobRelChan = mobRelChangeFunc_PMOS(SA, totalNFIN, FW, _SD, L_Drawn);
                     mobRelChanRef = mobRelChangeFunc_PMOS(SA_REF, totalNFIN, FW, _SD, L_Drawn);
                 }
@@ -216,8 +216,8 @@ void Placer::minimizeLOD(bool verbose){
                 //move to better
                 if(m_LODCost - getLODCost(FW, totalNFIN, mobRelChan, mobRelChanRef, _SD, L_Drawn) > 0){
                     m_LODCost = getLODCost(FW, totalNFIN, mobRelChan, mobRelChanRef, _SD, L_Drawn);
-                    m_mainBlockList[iter].setNFin(NF);
-                    m_mainBlockList[iter].setSD(_SD);
+                    m_mainBlockList[iter]->setNFin(NF);
+                    m_mainBlockList[iter]->setSD(_SD);
                 }
                 _SD += 0.01;
             }
@@ -235,16 +235,16 @@ void Placer::minimizeLOD(bool verbose){
             std::cout << "----------------Priority i = " << i << "----------------" << std::endl;
             std::cout << "Priority:"<< i <<", # of moudle have this priority: " << m_vConstraints[i].size() << std::endl;
             for(int j = 0; j < m_vConstraints[i].size(); ++j){
-                std::cout << "---module name: " << m_vConstraints[i][j].getName() << "---" << std::endl;
+                std::cout << "---module name: " << m_vConstraints[i][j]->getName() << "---" << std::endl;
                 std::cout << "This module's m_vModuleList size: ";
-                std::cout << m_vConstraints[i][j].m_vModuleList.size() << std::endl;
+                std::cout << m_vConstraints[i][j]->m_vModuleList.size() << std::endl;
                 std::cout << "m_vModuleList: " << std::endl;
-                for(int k = 0; k < m_vConstraints[i][j].m_vModuleList.size(); ++k){
-                    std::cout << "Block Name: " << m_vConstraints[i][j].m_vModuleList[k].getName() << std::endl;
-                    std::cout << "W_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getWDrawn() << std::endl;
-                    std::cout << "L_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getLDrawn() << std::endl;
-                    std::cout << "N Fin: " << m_vConstraints[i][j].m_vModuleList[k].getNFin() << std::endl;
-                    std::cout << "SD: " << m_vConstraints[i][j].m_vModuleList[k].getSD() << std::endl;
+                for(int k = 0; k < m_vConstraints[i][j]->m_vModuleList.size(); ++k){
+                    std::cout << "Block Name: " << m_vConstraints[i][j]->m_vModuleList[k]->getName() << std::endl;
+                    std::cout << "W_Drawn: " << m_vConstraints[i][j]->m_vModuleList[k]->getWDrawn() << std::endl;
+                    std::cout << "L_Drawn: " << m_vConstraints[i][j]->m_vModuleList[k]->getLDrawn() << std::endl;
+                    std::cout << "N Fin: " << m_vConstraints[i][j]->m_vModuleList[k]->getNFin() << std::endl;
+                    std::cout << "SD: " << m_vConstraints[i][j]->m_vModuleList[k]->getSD() << std::endl;
                 }
             }
         }
@@ -252,11 +252,11 @@ void Placer::minimizeLOD(bool verbose){
         std::cout << "==================m_mainBlockList==================" << std::endl;
         std::cout << "Size: " << m_mainBlockList.size() << std::endl;
         for(int i = 0; i < m_mainBlockList.size(); ++i){
-            std::cout << m_mainBlockList[i].getName() << std::endl;
-            std::cout << "W_Drawn: " << m_mainBlockList[i].getWDrawn() << std::endl;
-            std::cout << "L_Drawn: " << m_mainBlockList[i].getLDrawn() << std::endl;
-            std::cout << "N Fin: " << m_mainBlockList[i].getNFin() << std::endl;
-            std::cout << "SD: " << m_mainBlockList[i].getSD() << std::endl;
+            std::cout << m_mainBlockList[i]->getName() << std::endl;
+            std::cout << "W_Drawn: " << m_mainBlockList[i]->getWDrawn() << std::endl;
+            std::cout << "L_Drawn: " << m_mainBlockList[i]->getLDrawn() << std::endl;
+            std::cout << "N Fin: " << m_mainBlockList[i]->getNFin() << std::endl;
+            std::cout << "SD: " << m_mainBlockList[i]->getSD() << std::endl;
         }
     }
 
@@ -273,31 +273,31 @@ void Placer::insertDummy(){
 
     for(int p = 0; p < m_level.size()-1; ++p){  // priority
         for(int iter = 0; iter < m_vConstraints[p].size(); ++iter){
-            if(m_vConstraints[p][iter].m_vModuleList.size() > 0){
+            if(m_vConstraints[p][iter]->m_vModuleList.size() > 0){
                 double a = 0.0, b = 0.0, c = 0.0;
-                double L_Drawn = m_vConstraints[p][iter].m_vModuleList[0].getLDrawn();
-                double SD = m_vConstraints[p][iter].m_vModuleList[0].m_lde.SD;
-                double NF = m_vConstraints[p][iter].m_vModuleList[0].getNFin();
+                double L_Drawn = m_vConstraints[p][iter]->m_vModuleList[0]->getLDrawn();
+                double SD = m_vConstraints[p][iter]->m_vModuleList[0]->m_lde.SD;
+                double NF = m_vConstraints[p][iter]->m_vModuleList[0]->getNFin();
                 
-                if(m_vConstraints[p][iter].m_vModuleList[0].getNFin() % 2 != 0){    // with odd # of fins
-                    double k = floor(m_vConstraints[p][iter].m_vModuleList[0].getNFin() / 2);
+                if(m_vConstraints[p][iter]->m_vModuleList[0]->getNFin() % 2 != 0){    // with odd # of fins
+                    double k = floor(m_vConstraints[p][iter]->m_vModuleList[0]->getNFin() / 2);
                     k = k - 1;
                     a = SA + k * (L_Drawn + SD) + L_Drawn / 2.0;
                     a = 1 / a;
                     b = SA + (NF - (k+1)) * (L_Drawn + SD) + (L_Drawn / 2.0);
                     b = 1 / b;
                     a = a + b;
-                    if(m_vConstraints[p][iter].m_vModuleList[0].m_lde.eDeviceType == PMOS){
-                        P_Stress[make_pair(m_vConstraints[p][iter].m_vModuleList[0].getName(),a)] = 
-                        make_pair(m_vConstraints[p][iter].m_lde.CHECK, make_pair(p, iter));   
+                    if(m_vConstraints[p][iter]->m_vModuleList[0]->m_lde.eDeviceType == PMOS){
+                        P_Stress[make_pair(m_vConstraints[p][iter]->m_vModuleList[0]->getName(),a)] = 
+                        make_pair(m_vConstraints[p][iter]->m_lde.CHECK, make_pair(p, iter));   
                     }
                     else{   //NMOS
-                        N_Stress[make_pair(m_vConstraints[p][iter].m_vModuleList[0].getName(),a)] = 
-                        make_pair(m_vConstraints[p][iter].m_lde.CHECK, make_pair(p, iter));   
+                        N_Stress[make_pair(m_vConstraints[p][iter]->m_vModuleList[0]->getName(),a)] = 
+                        make_pair(m_vConstraints[p][iter]->m_lde.CHECK, make_pair(p, iter));   
                     }
                 }
                 else{   // with even # of fins
-                    double k = m_vConstraints[p][iter].m_vModuleList[0].getNFin() / 2;
+                    double k = m_vConstraints[p][iter]->m_vModuleList[0]->getNFin() / 2;
                     k = k - 1;
                     a = SA + k * (L_Drawn + SD) + L_Drawn / 2.0;
                     a = 1 / a;
@@ -313,13 +313,13 @@ void Placer::insertDummy(){
                     c += a + b;
 
                     c = c / 2.0;
-                    if(m_vConstraints[p][iter].m_vModuleList[0].m_lde.eDeviceType == PMOS){
-                        P_Stress[make_pair(m_vConstraints[p][iter].m_vModuleList[0].getName(),a)] = 
-                        make_pair(m_vConstraints[p][iter].m_lde.CHECK, make_pair(p, iter));   
+                    if(m_vConstraints[p][iter]->m_vModuleList[0]->m_lde.eDeviceType == PMOS){
+                        P_Stress[make_pair(m_vConstraints[p][iter]->m_vModuleList[0]->getName(),a)] = 
+                        make_pair(m_vConstraints[p][iter]->m_lde.CHECK, make_pair(p, iter));   
                     }
                     else{   //NMOS
-                        N_Stress[make_pair(m_vConstraints[p][iter].m_vModuleList[0].getName(),a)] = 
-                        make_pair(m_vConstraints[p][iter].m_lde.CHECK, make_pair(p, iter));   
+                        N_Stress[make_pair(m_vConstraints[p][iter]->m_vModuleList[0]->getName(),a)] = 
+                        make_pair(m_vConstraints[p][iter]->m_lde.CHECK, make_pair(p, iter));   
                     }
                 }
             }
@@ -328,9 +328,9 @@ void Placer::insertDummy(){
     
     //@@
     for(int i = 0; i < m_vConstraints[0].size(); ++i){
-        if(m_vConstraints[0][i].m_vModuleList[0].getName() == "M6"){
-            m_vConstraints[0][i].m_vModuleList[0].m_nf = 2;
-            m_vConstraints[0][i].m_vModuleList[1].m_nf = 2;
+        if(m_vConstraints[0][i]->m_vModuleList[0]->getName() == "M6"){
+            m_vConstraints[0][i]->m_vModuleList[0]->m_nf = 2;
+            m_vConstraints[0][i]->m_vModuleList[1]->m_nf = 2;
         }
     }
     
@@ -339,21 +339,21 @@ void Placer::insertDummy(){
     //@@
     for(auto iter = P_Stress.begin(); iter != P_Stress.end(); ++iter){
         if(iter->second.first == "check1"){
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.DUM = 2;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.DUM = 2;
         }
         if(iter->second.first == "check2"){
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.DUM = 1;
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.SD = 0.2;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.DUM = 1;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.SD = 0.2;
         }
     }
 
     for(auto iter = N_Stress.begin(); iter != N_Stress.end(); ++iter){
         if(iter->second.first == "check1"){
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.DUM = 2;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.DUM = 2;
         }
         if(iter->second.first == "check2"){
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.DUM = 1;
-            m_vConstraints[iter->second.second.first][iter->second.second.second].m_vModuleList[0].m_lde.SD = 0.2;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.DUM = 1;
+            m_vConstraints[iter->second.second.first][iter->second.second.second]->m_vModuleList[0]->m_lde.SD = 0.2;
         }
     }
 
@@ -363,103 +363,103 @@ void Placer::determineSize(){
     double yy = 0.16;
     for(int p = 0; p < m_level.size(); ++p){    // priority
         for(int m = 0; m < m_vConstraints[p].size(); ++m){  //module
-            if(m_vConstraints[p][m].m_vModuleList.size() > 0){  
-                double NF = m_vConstraints[p][m].m_vModuleList[0].getNFin();
-                double TotalNF = NF + m_vConstraints[p][m].m_vModuleList[0].m_lde.DUM;
-                double LDrawn = m_vConstraints[p][m].m_vModuleList[0].getLDrawn();
-                double WDrawn = m_vConstraints[p][m].m_vModuleList[0].getWDrawn();
-                double SD = m_vConstraints[p][m].m_vModuleList[0].getSD();
+            if(m_vConstraints[p][m]->m_vModuleList.size() > 0){  
+                double NF = m_vConstraints[p][m]->m_vModuleList[0]->getNFin();
+                double TotalNF = NF + m_vConstraints[p][m]->m_vModuleList[0]->m_lde.DUM;
+                double LDrawn = m_vConstraints[p][m]->m_vModuleList[0]->getLDrawn();
+                double WDrawn = m_vConstraints[p][m]->m_vModuleList[0]->getWDrawn();
+                double SD = m_vConstraints[p][m]->m_vModuleList[0]->getSD();
 
                 double LOD = (2 * SA) + (TotalNF * LDrawn) + ((TotalNF-1) * SD);
                 double FW = WDrawn / NF;
 
-                switch (m_vConstraints[p][m].m_vModuleList[0].m_lde.eDeviceType){
+                switch (m_vConstraints[p][m]->m_vModuleList[0]->m_lde.eDeviceType){
                     case NMOS:{
-                        if(m_vConstraints[p][m].m_vModuleList[0].m_lde.isBodyDetached){ // is BodyDetached
-                            double BL = m_vConstraints[p][m].m_vModuleList[0].m_lde.BL;
-                            double BR = m_vConstraints[p][m].m_vModuleList[0].m_lde.BR;
+                        if(m_vConstraints[p][m]->m_vModuleList[0]->m_lde.isBodyDetached){ // is BodyDetached
+                            double BL = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.BL;
+                            double BR = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.BR;
                             if((BL && !BR) || (!BL && BR)){
-                                if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.60;
-                                else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.47;
+                                //if(WDrawn == yy) 
+                                    //m_vConstraints[p][m]->m_vModuleList[0]->m_width = LOD + 2*(0.01+0.12) + 0.60;
+                                //else 
+                                    //m_vConstraints[p][m]->m_vModuleList[0]->m_width = LOD + 2*(0.01+0.12) + 0.47;
                             }
                             else if(!BL && !BR){
-                                m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12);
+                                //m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12);
                             }
                             else if(BL && BR){
-                                if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12+0.60);
-                                else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = 2 * (0.01+0.12+0.47) + LOD;
+                                //if(WDrawn == yy) 
+                                    //m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12+0.60);
+                                //else 
+                                    //m_vConstraints[p][m].m_vModuleList[0].m_width = 2 * (0.01+0.12+0.47) + LOD;
                             }
                             else{ }
                             
                             if(BL){
                                 if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SA = SA + 0.60;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SA = SA + 0.60;
                                 else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SA = SA + 0.47;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SA = SA + 0.47;
                             }
                             
                             if(BR){
                                 if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SB = SA + 0.60;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SB = SA + 0.60;
                                 else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SB = SA + 0.47;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SB = SA + 0.47;
                             }
-                            m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2 * (0.14+0.02);
-                            m_vConstraints[p][m].m_vModuleList[0].m_lde.Y2 = 0.2;
+                            //m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2 * (0.14+0.02);
+                            m_vConstraints[p][m]->m_vModuleList[0]->m_lde.Y2 = 0.2;
                         }
                         else{   //not BodyDetached
-                            m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12);
-                            m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2*(0.14+0.02);
-                            m_vConstraints[p][m].m_vModuleList[0].m_lde.Y2 = 0.2;
+                            //m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12);
+                            //m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2*(0.14+0.02);
+                            m_vConstraints[p][m]->m_vModuleList[0]->m_lde.Y2 = 0.2;
                         }
                     }
                     break;
 
                     case PMOS:{
-                        if(m_vConstraints[p][m].m_vModuleList[0].m_lde.isBodyDetached){ // is BodyDetached
-                            double BL = m_vConstraints[p][m].m_vModuleList[0].m_lde.BL;
-                            double BR = m_vConstraints[p][m].m_vModuleList[0].m_lde.BR;
+                        if(m_vConstraints[p][m]->m_vModuleList[0]->m_lde.isBodyDetached){ // is BodyDetached
+                            double BL = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.BL;
+                            double BR = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.BR;
                             if((BL && !BR) || (!BL && BR)){
-                                if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.60;
-                                else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.47;
+                                //if(WDrawn == yy) 
+                                //    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.60;
+                                //else 
+                                //    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12) + 0.47;
                             }
                             else if(!BL && !BR){
-                                m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12);
+                                //m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12);
                             }
                             else if(BL && BR){
-                                if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12+0.60);
-                                else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_width = 2 * (0.01+0.12+0.47) + LOD;
+                                //if(WDrawn == yy) 
+                                 //   m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2 * (0.01+0.12+0.60);
+                                //else 
+                                 //   m_vConstraints[p][m].m_vModuleList[0].m_width = 2 * (0.01+0.12+0.47) + LOD;
                             }
                             else{ }
                             
                             if(BL){
                                 if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SA = SA + 0.60;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SA = SA + 0.60;
                                 else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SA = SA + 0.47;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SA = SA + 0.47;
                             }
                             
                             if(BR){
                                 if(WDrawn == yy) 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SB = SA + 0.60;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SB = SA + 0.60;
                                 else 
-                                    m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SB = SA + 0.47;
+                                    m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SB = SA + 0.47;
                             }
-                            m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2 * (0.14+0.02);
-                            m_vConstraints[p][m].m_vModuleList[0].m_lde.Y2 = 0.2;
+                            //m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2 * (0.14+0.02);
+                            m_vConstraints[p][m]->m_vModuleList[0]->m_lde.Y2 = 0.2;
                         }
                         else{   //not BodyDetached
-                            m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12);
-                            m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2*(0.14+0.02);
-                            m_vConstraints[p][m].m_vModuleList[0].m_lde.Y2 = 0.2;
+                            //m_vConstraints[p][m].m_vModuleList[0].m_width = LOD + 2*(0.01+0.12);
+                            //m_vConstraints[p][m].m_vModuleList[0].m_height = FW + 2*(0.14+0.02);
+                            m_vConstraints[p][m]->m_vModuleList[0]->m_lde.Y2 = 0.2;
                         }
                     }
                     break;
@@ -468,12 +468,12 @@ void Placer::determineSize(){
                         break;
                 }
 
-                if( m_vConstraints[p][m].m_constraint.eConstraintType == SYMMETRY ){
-                    m_vConstraints[p][m].m_vModuleList[1].setW(m_vConstraints[p][m].m_vModuleList[0].getW());
-                    m_vConstraints[p][m].m_vModuleList[1].setH(m_vConstraints[p][m].m_vModuleList[0].getH());
-                    m_vConstraints[p][m].m_vModuleList[1].m_lde.LDE_SA = m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SA;
-                    m_vConstraints[p][m].m_vModuleList[1].m_lde.LDE_SB = m_vConstraints[p][m].m_vModuleList[0].m_lde.LDE_SB;
-                    m_vConstraints[p][m].m_vModuleList[1].m_lde.Y2 = m_vConstraints[p][m].m_vModuleList[0].m_lde.Y2;
+                if( m_vConstraints[p][m]->m_constraint.eConstraintType == SYMMETRY ){
+                    //m_vConstraints[p][m].m_vModuleList[1].setW(m_vConstraints[p][m].m_vModuleList[0].getW());
+                    //m_vConstraints[p][m].m_vModuleList[1].setH(m_vConstraints[p][m].m_vModuleList[0].getH());
+                    m_vConstraints[p][m]->m_vModuleList[1]->m_lde.LDE_SA = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SA;
+                    m_vConstraints[p][m]->m_vModuleList[1]->m_lde.LDE_SB = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.LDE_SB;
+                    m_vConstraints[p][m]->m_vModuleList[1]->m_lde.Y2 = m_vConstraints[p][m]->m_vModuleList[0]->m_lde.Y2;
                 }
             }
         }
@@ -482,94 +482,94 @@ void Placer::determineSize(){
 
 
     for(int iter = 0; iter < m_mainBlockList.size(); ++iter){
-        double NF = m_mainBlockList[iter].getNFin();
-        double LDrawn = m_mainBlockList[iter].getLDrawn();
-        double WDrawn = m_mainBlockList[iter].getWDrawn();
-        double SD = m_mainBlockList[iter].m_lde.SD;
+        double NF = m_mainBlockList[iter]->getNFin();
+        double LDrawn = m_mainBlockList[iter]->getLDrawn();
+        double WDrawn = m_mainBlockList[iter]->getWDrawn();
+        double SD = m_mainBlockList[iter]->m_lde.SD;
         double FW = WDrawn / NF;
         double LOD = (2 * SA) + ( NF + 2 ) * (LDrawn) + ( NF + 1 ) * SD;
-        double BL = m_mainBlockList[iter].m_lde.BL;
-        double BR = m_mainBlockList[iter].m_lde.BR;
-        double BT = m_mainBlockList[iter].m_lde.BT;
-        double BB = m_mainBlockList[iter].m_lde.BB;
+        double BL = m_mainBlockList[iter]->m_lde.BL;
+        double BR = m_mainBlockList[iter]->m_lde.BR;
+        double BT = m_mainBlockList[iter]->m_lde.BT;
+        double BB = m_mainBlockList[iter]->m_lde.BB;
 
-        switch (m_mainBlockList[iter].m_lde.eDeviceType){
+        switch (m_mainBlockList[iter]->m_lde.eDeviceType){
             case NMOS:{
-                if(m_mainBlockList[iter].m_lde.isBodyDetached){ // is BodyDetached
+                if(m_mainBlockList[iter]->m_lde.isBodyDetached){ // is BodyDetached
                     if((BL && !BR) || (!BL && BR)){
-                        m_mainBlockList[iter].m_width = 0.3 + 0.12 + LOD;
+                        //m_mainBlockList[iter].m_width = 0.3 + 0.12 + LOD;
                     }
                     else if(!BL && !BR){
-                        m_mainBlockList[iter].m_width = LOD;
+                        //m_mainBlockList[iter].m_width = LOD;
                     }
                     else if(BL && BR){
-                        m_mainBlockList[iter].m_width = 2 * (0.3 + 0.12) + LOD;
+                        //m_mainBlockList[iter].m_width = 2 * (0.3 + 0.12) + LOD;
                     }
                     else { }
 
                     if(BL)
-                        m_mainBlockList[iter].m_lde.LDE_SA = SA + 0.42;
+                        m_mainBlockList[iter]->m_lde.LDE_SA = SA + 0.42;
                     if(BR)
-                        m_mainBlockList[iter].m_lde.LDE_SB = SA + 0.42;
+                        m_mainBlockList[iter]->m_lde.LDE_SB = SA + 0.42;
 
                     if( (BT && !BB) || (!BT && BB) ){
-                        m_mainBlockList[iter].m_height = FW + 0.36 + 0.12;
+                        //m_mainBlockList[iter].m_height = FW + 0.36 + 0.12;
                     }
                     else if(!BT && !BB){
-                        m_mainBlockList[iter].m_height = FW + 2 * 0.12;
+                        //m_mainBlockList[iter].m_height = FW + 2 * 0.12;
                     }
                     else if(BT && BB){
-                        m_mainBlockList[iter].m_height = FW + 2 * (0.36 + 0.12);
+                        //m_mainBlockList[iter].m_height = FW + 2 * (0.36 + 0.12);
                     }
                     else { }
 
                     if(BB)
-                        m_mainBlockList[iter].m_lde.Y2 = 0.36;
+                        m_mainBlockList[iter]->m_lde.Y2 = 0.36;
 
                 }
                 else{   // not BodyDetached
-                    m_mainBlockList[iter].m_width = LOD;
-                    m_mainBlockList[iter].m_height = FW + 2 * 0.12;
+                    //m_mainBlockList[iter].m_width = LOD;
+                    //m_mainBlockList[iter].m_height = FW + 2 * 0.12;
                 }
             }
             break;
 
             case PMOS:{
-                if(m_mainBlockList[iter].m_lde.isBodyDetached){ // is BodyDetached
+                if(m_mainBlockList[iter]->m_lde.isBodyDetached){ // is BodyDetached
                     if((BL && !BR) || (!BL && BR)){
-                        m_mainBlockList[iter].m_width = 0.36 + 0.12 + LOD;
+                        //m_mainBlockList[iter].m_width = 0.36 + 0.12 + LOD;
                     }
                     else if(!BL && !BR){
-                        m_mainBlockList[iter].m_width = LOD;
+                        //m_mainBlockList[iter].m_width = LOD;
                     }
                     else if(BL && BR){
-                        m_mainBlockList[iter].m_width = 2 * (0.36 + 0.12) + LOD;
+                        //m_mainBlockList[iter].m_width = 2 * (0.36 + 0.12) + LOD;
                     }
                     else { }
 
                     if(BL)
-                        m_mainBlockList[iter].m_lde.LDE_SA = SA + 0.48;
+                        m_mainBlockList[iter]->m_lde.LDE_SA = SA + 0.48;
                     if(BR)
-                        m_mainBlockList[iter].m_lde.LDE_SB = SA + 0.48;
+                        m_mainBlockList[iter]->m_lde.LDE_SB = SA + 0.48;
 
                     if( (BT && !BB) || (!BT && BB) ){
-                        m_mainBlockList[iter].m_height = FW + 0.42 + 0.12;
+                        //m_mainBlockList[iter].m_height = FW + 0.42 + 0.12;
                     }
                     else if(!BT && !BB){
-                        m_mainBlockList[iter].m_height = FW + 2 * 0.12;
+                        //m_mainBlockList[iter].m_height = FW + 2 * 0.12;
                     }
                     else if(BT && BB){
-                        m_mainBlockList[iter].m_height = FW + 2 * (0.42 + 0.12);
+                        //m_mainBlockList[iter].m_height = FW + 2 * (0.42 + 0.12);
                     }
                     else { }
 
                     if(BB)
-                        m_mainBlockList[iter].m_lde.Y2 = 0.42;
+                        m_mainBlockList[iter]->m_lde.Y2 = 0.42;
 
                 }
                 else{   // not BodyDetached
-                    m_mainBlockList[iter].m_width = LOD;
-                    m_mainBlockList[iter].m_height = FW + 2 * 0.12;
+                    //m_mainBlockList[iter].m_width = LOD;
+                    //m_mainBlockList[iter].m_height = FW + 2 * 0.12;
                 }
             } 
             break;
@@ -659,7 +659,7 @@ double Placer::updateT(int iter){
     }
 }
 
-void Placer::showGenDeviceInfo(bool verbose, std::string flag){
+void Placer::showInfo(bool verbose, std::string flag){
     if(verbose){
         std::cout << std::endl;
         std::cout << "*********************************" << flag << "*********************************" << std::endl;
@@ -669,19 +669,31 @@ void Placer::showGenDeviceInfo(bool verbose, std::string flag){
             std::cout << "----------------Priority i = " << i << "----------------" << std::endl;
             std::cout << "Priority:"<< i <<", # of moudle have this priority: " << m_vConstraints[i].size() << std::endl;
             for(int j = 0; j < m_vConstraints[i].size(); ++j){
-                std::cout << "-------------module name: " << m_vConstraints[i][j].getName() << "-------------" << std::endl;
+                std::cout << "-------------module name: " << m_vConstraints[i][j]->getName() << "-------------" << std::endl;
                 std::cout << "This module's m_vModuleList size: ";
-                std::cout << m_vConstraints[i][j].m_vModuleList.size()
+                std::cout << m_vConstraints[i][j]->m_vModuleList.size()
                           << " , m_vModuleList shown below, : " << std::endl;
-                for(int k = 0; k < m_vConstraints[i][j].m_vModuleList.size(); ++k){
+                for(int k = 0; k < m_vConstraints[i][j]->m_vModuleList.size(); ++k){
                     std::cout << ">>>>>>" << std::endl;
-                    std::cout << "Block Name: " << m_vConstraints[i][j].m_vModuleList[k].getName() << std::endl;
-                    std::cout << "W_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getWDrawn() << std::endl;
-                    std::cout << "L_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getLDrawn() << std::endl;
-                    std::cout << "N Fin: " << m_vConstraints[i][j].m_vModuleList[k].getNFin() << std::endl;
-                    std::cout << "SD: " << m_vConstraints[i][j].m_vModuleList[k].getSD() << std::endl;
-                    std::cout << "Blk Width: " << m_vConstraints[i][j].m_vModuleList[k].getW() << std::endl;
-                    std::cout << "Blk Height: " << m_vConstraints[i][j].m_vModuleList[k].getH() << std::endl;
+                    std::cout << "Block Name: " << m_vConstraints[i][j]->m_vModuleList[k]->getName() << std::endl;
+                    //std::cout << "W_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getWDrawn() << std::endl;
+                    //std::cout << "L_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getLDrawn() << std::endl;
+                    std::cout << "Blk Width: " << m_vConstraints[i][j]->m_vModuleList[k]->getW() << std::endl;
+                    std::cout << "Blk Height: " << m_vConstraints[i][j]->m_vModuleList[k]->getH() << std::endl;
+                    std::cout << "N Fin: " << m_vConstraints[i][j]->m_vModuleList[k]->getNFin() << std::endl;
+                    //std::cout << "SD: " << m_vConstraints[i][j].m_vModuleList[k].getSD() << std::endl;
+                    std::cout << "Axis Name: " << m_vConstraints[i][j]->m_name << std::endl;
+                    std::cout << "Constraint Type: " << m_vConstraints[i][j]->m_constraint.eConstraintType << std::endl;
+                    if(m_vConstraints[i][j]->m_vModuleList[k]->m_pChild == nullptr){
+                        std::cout << "***Child***: " << "nullptr" << std::endl;
+                    }
+                    else{
+                        std::cout << "***Child***: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getName() << std::endl;
+                        std::cout << "Child W: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getW() << std::endl;
+                        std::cout << "Child H: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getH() << std::endl;
+                        std::cout << "Axis Name: " << m_vConstraints[i][j]->m_name << std::endl;
+                        std::cout << "Constraint Type: " << m_vConstraints[i][j]->m_constraint.eConstraintType << std::endl;
+                    }
                 }
             }
         }
@@ -689,13 +701,22 @@ void Placer::showGenDeviceInfo(bool verbose, std::string flag){
         std::cout << "==================m_mainBlockList==================" << std::endl;
         std::cout << "Size: " << m_mainBlockList.size() << std::endl;
         for(int i = 0; i < m_mainBlockList.size(); ++i){
-            std::cout << m_mainBlockList[i].getName() << std::endl;
-            std::cout << "W_Drawn: " << m_mainBlockList[i].getWDrawn() << std::endl;
-            std::cout << "L_Drawn: " << m_mainBlockList[i].getLDrawn() << std::endl;
-            std::cout << "N Fin: " << m_mainBlockList[i].getNFin() << std::endl;
-            std::cout << "SD: " << m_mainBlockList[i].getSD() << std::endl;
-            std::cout << "Blk Width: " << m_mainBlockList[i].getW() << std::endl;
-            std::cout << "Blk Height: " << m_mainBlockList[i].getH() << std::endl;
+            std::cout << m_mainBlockList[i]->getName() << std::endl;
+            //std::cout << "W_Drawn: " << m_mainBlockList[i].getWDrawn() << std::endl;
+            //std::cout << "L_Drawn: " << m_mainBlockList[i].getLDrawn() << std::endl;
+            std::cout << "Blk Width: " << m_mainBlockList[i]->getW() << std::endl;
+            std::cout << "Blk Height: " << m_mainBlockList[i]->getH() << std::endl;
+            std::cout << "N Fin: " << m_mainBlockList[i]->getNFin() << std::endl;
+            //std::cout << "SD: " << m_mainBlockList[i].getSD() << std::endl;
+            if(m_mainBlockList[i]->m_pChild == nullptr){
+                        std::cout << "***Child***: " << "nullptr" << std::endl;
+            }
+            else{
+                std::cout << "***Child***: " << m_mainBlockList[i]->m_pChild->getName() << std::endl;
+                std::cout << "Child W: " << m_mainBlockList[i]->m_pChild->getW() << std::endl;
+                std::cout << "Child H: " << m_mainBlockList[i]->m_pChild->getH() << std::endl;
+            }
         }
     }
 }
+
