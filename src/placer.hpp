@@ -49,9 +49,7 @@ public:
     double mobRelChangeFunc_NMOS(double SA, double NF, double FW, double SD, double LDrawn);
     double getLODCost(double FW, double NFIN, double mobRelChan, double mobRelChanRef, double SD, double LDrawn);
     double m_LODCost;
-
-    void mergeSymConstraint();
-    void interWellPlaceModules();
+    double m_avgMobWPE;
 
 /* SA */
     double updateT(int iter);
@@ -69,9 +67,11 @@ public:
 
 /* Placer */
     void clearLists();
-    void constructTree();
+    void constructHierarchicalModuleClusteringTree();
     void setSymmetryChild();
     void mergeSymmetryConstraint();
+    void setWellIsland();
+    double interWellPlaceModules(Block* blk);
 
 
 private:
