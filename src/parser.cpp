@@ -524,3 +524,77 @@ void Placer::splitString(std::string str, std::vector<std::string>& vec){
     }
     vec = words;
 }
+
+void Placer::showInfo(bool verbose, std::string flag){
+    if(verbose){
+        std::cout << std::endl;
+        std::cout << "*********************************" << flag << "*********************************" << std::endl;
+        std::cout << "=================================m_vConstraints=================================" << std::endl;
+        std::cout << "Size(# of priority): " << m_vConstraints.size() << std::endl;
+        for(int i = 0; i < m_vConstraints.size(); ++i){
+            std::cout << "----------------Priority i = " << i << "----------------" << std::endl;
+            std::cout << "Priority:"<< i <<", # of moudle have this priority: " << m_vConstraints[i].size() << std::endl;
+            for(int j = 0; j < m_vConstraints[i].size(); ++j){
+                std::cout << "-------------module name: " << m_vConstraints[i][j]->getName() << "-------------" << std::endl;
+                std::cout << "This module's m_vModuleList size: ";
+                std::cout << m_vConstraints[i][j]->m_vModuleList.size()
+                          << " , m_vModuleList shown below, : " << std::endl;
+                for(int k = 0; k < m_vConstraints[i][j]->m_vModuleList.size(); ++k){
+                    std::cout << ">>>>>>" << std::endl;
+                    std::cout << "Block Name: " << m_vConstraints[i][j]->m_vModuleList[k]->getName() << std::endl;
+                    //std::cout << "W_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getWDrawn() << std::endl;
+                    //std::cout << "L_Drawn: " << m_vConstraints[i][j].m_vModuleList[k].getLDrawn() << std::endl;
+                    std::cout << "Blk Width: " << m_vConstraints[i][j]->m_vModuleList[k]->getW() << std::endl;
+                    std::cout << "Blk Height: " << m_vConstraints[i][j]->m_vModuleList[k]->getH() << std::endl;
+                    std::cout << "N Fin: " << m_vConstraints[i][j]->m_vModuleList[k]->getNFin() << std::endl;
+                    std::cout << "LDE_SA: " << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.LDE_SA << std::endl;
+                    std::cout << "LDE_SB: " << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.LDE_SB << std::endl;
+                    std::cout << "LDE_SD: " << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.SD << std::endl;
+                    //std::cout << "SD: " << m_vConstraints[i][j].m_vModuleList[k].getSD() << std::endl;
+                    std::cout << "Axis Name: " << m_vConstraints[i][j]->m_name << std::endl;
+                    std::cout << "Constraint Type: " << m_vConstraints[i][j]->m_constraint.eConstraintType << std::endl;
+                    std::cout << "WellHiearchical: " << m_vConstraints[i][j]->m_vModuleList[k]->m_isWellHiearchical << std::endl;
+                    std::cout << "WT/WB/WR/WL: " << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.WT << "/" 
+                                                 << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.WB << "/" 
+                                                 << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.WR << "/" 
+                                                 << m_vConstraints[i][j]->m_vModuleList[k]->m_lde.WL << std::endl;
+                    if(m_vConstraints[i][j]->m_vModuleList[k]->m_pChild == nullptr){
+                        std::cout << "***Child***: " << "nullptr" << std::endl;
+                    }
+                    else{
+                        std::cout << "***Child***: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getName() << std::endl;
+                        std::cout << "Child W: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getW() << std::endl;
+                        std::cout << "Child H: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->getH() << std::endl;
+                        //std::cout << "Axis Name: " << m_vConstraints[i][j]->m_name << std::endl;
+                        //std::cout << "Constraint Type: " << m_vConstraints[i][j]->m_constraint.eConstraintType << std::endl;
+                        std::cout << "WellHiearchical: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->m_isWellHiearchical << std::endl;
+                        std::cout << "WT/WB/WR/WL: " << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->m_lde.WT << "/" 
+                                                     << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->m_lde.WB << "/" 
+                                                     << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->m_lde.WR << "/" 
+                                                     << m_vConstraints[i][j]->m_vModuleList[k]->m_pChild->m_lde.WL << std::endl;
+                    }
+                }
+            }
+        }
+        
+        std::cout << "==================m_mainBlockList==================" << std::endl;
+        std::cout << "Size: " << m_mainBlockList.size() << std::endl;
+        for(int i = 0; i < m_mainBlockList.size(); ++i){
+            std::cout << m_mainBlockList[i]->getName() << std::endl;
+            //std::cout << "W_Drawn: " << m_mainBlockList[i].getWDrawn() << std::endl;
+            //std::cout << "L_Drawn: " << m_mainBlockList[i].getLDrawn() << std::endl;
+            std::cout << "Blk Width: " << m_mainBlockList[i]->getW() << std::endl;
+            std::cout << "Blk Height: " << m_mainBlockList[i]->getH() << std::endl;
+            std::cout << "N Fin: " << m_mainBlockList[i]->getNFin() << std::endl;
+            //std::cout << "SD: " << m_mainBlockList[i].getSD() << std::endl;
+            if(m_mainBlockList[i]->m_pChild == nullptr){
+                        std::cout << "***Child***: " << "nullptr" << std::endl;
+            }
+            else{
+                std::cout << "***Child***: " << m_mainBlockList[i]->m_pChild->getName() << std::endl;
+                std::cout << "Child W: " << m_mainBlockList[i]->m_pChild->getW() << std::endl;
+                std::cout << "Child H: " << m_mainBlockList[i]->m_pChild->getH() << std::endl;
+            }
+        }
+    }
+}
