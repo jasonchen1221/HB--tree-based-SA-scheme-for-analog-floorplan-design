@@ -24,8 +24,8 @@ const double TIME_LIMIT         = 0.0;
 const int    RANDOM_RANGE       = 0;
 const int    NULL_SIZE          = 0;
 
-const int    INIT_PURTURB_NUM   = 0;  //prob. size
-const int    INIT               = 0;
+const int    INIT_PURTURB_NUM   = 1000;  //prob. size
+const int    INIT               = 50;
 const double RING_SPACING       = 0.0;
 
 /* Stress Parameters */
@@ -36,8 +36,8 @@ const double MAX_SD             = 0.32;      // maxinum poly-to-poly spacing
 const double TNOM               = 25.0;
 const double TEMP               = 25.0;
 
-const double TWPE               = 0.0;
-const double SC_REF             = 0.0;
+const double TWPE               = 0.8;
+const double SC_REF             = 1.0;
 
 /* NMOS */
 const double N_u0               = 0.05282;
