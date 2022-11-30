@@ -17,8 +17,10 @@ int main(int argc, char* argv[]){
         placer.parseGrpFile(argv[4], false);
     
     placer.setDevice();
+    
     placer.constructHierarchicalModuleClusteringTree();
-
+    placer.place();
+    
 
     return 0;
 }
