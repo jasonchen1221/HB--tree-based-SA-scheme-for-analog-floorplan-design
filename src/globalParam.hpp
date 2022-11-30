@@ -20,7 +20,7 @@ const double Y_INIT             = 0.0;
 const double Z_INIT             = 0.0;
 
 /*  */
-const double TIME_LIMIT         = 0.0;
+const double TIME_LIMIT         = 3000.0;
 const int    RANDOM_RANGE       = 0;
 const int    NULL_SIZE          = 0;
 
@@ -135,6 +135,26 @@ struct Contour{
     double   w, h; 
     double   max;
     Contour* BACK = nullptr;
+};
+
+/* Perturbation Modes */
+enum PertubType{
+    LEFT_ROTATE                 = 0,
+    RIGHT_ROTATE                = 1,
+    SWAP_TWO_BLOCKS             = 2,
+    ROTATE_BLOCK                = 3,
+    REP_CHANGE                  = 4,
+    LEFT_ROTATE_HB              = 5,
+    RIGHT_ROTATE_HB             = 6,
+    SWAP_TWO_BLOCKS_HB          = 7,
+//  ROTATE_BLOCK_HB             = 8,
+    ASF_OP_HB                   = 8,
+    ROTATE_BLOCK_HB             = 9,
+    SWAP_TWO_HIERARCHY_BLOCKS   = 10,
+    LEFT_ROTATE_HIERARCHY       = 11,
+    RIGHT_ROTATE_HIERARCHY      = 12,
+
+    OPT_TOT                     = 13
 };
 
 
