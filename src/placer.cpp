@@ -1,7 +1,12 @@
 #include "placer.hpp"
 #include <map>
 
+extern time_t startTime;
+
+/* ---------------------------Pre works of Placer--------------------------- */
 void Placer::constructHierarchicalModuleClusteringTree(){
+    std::cout << "Construct Hierarchical Module Clustering Tree..." << std::endl;
+    
     setSymmetryChild();
     showInfo(false, "After set Symmetry Child");
 
@@ -12,8 +17,8 @@ void Placer::constructHierarchicalModuleClusteringTree(){
     setWellIsland();
     //need to add on showing out m_isWellHiearchical, WT, WB, WR, WL
     showInfo(false, "After set Well Island");
-    
-    
+
+    std::cout << "Construct Hierarchical Module Clustering Tree[FINSHED]" << std::endl;
 }
 
 void Placer::setSymmetryChild(){
@@ -96,7 +101,6 @@ void Placer::mergeSymmetryConstraint(){
         }
     }
 }
-
 
 void Placer::setWellIsland(){
     // same body potential -> set as well island
@@ -256,26 +260,48 @@ double Placer::interWellPlaceModules(Block* blk){
     return WPE_SCA;
 }
 
-void Placer::clearLists(){
-    for(int  i = 0; i < m_mainBlockList.size(); ++i){
-        delete m_mainBlockList[i];
-    }      
+/* ---------------------------------Placer--------------------------------- */
+void Placer::place(){
+    std::cout << "Start Place..." << std::endl;
 
-    m_vBlockList.clear();    
-    m_vPinList.clear();
-    m_vNetList.clear();
-       
-       /*
-       for(map<string, Btree*>::const_iterator it = _bstar.begin();
-       it != _bstar.end(); ++it)
-          delete it->second;
-       _bstar.clear();
-        */
-    m_mainBlockList.clear();
+    for(int i = 0; i < m_vConstraints[0].size(); ++i){  // all modules w/ priority == 0
+        clearSAList();  // clear m_saBlockList, m_saSymList, m_saBlockHash, m_saNewBlockList
+
+        m_saBlockList.insert(m_saBlockList.begin(), 
+                             m_vConstraints[0][i]->m_vModuleList.begin(), 
+                             m_vConstraints[0][i]->m_vModuleList.begin() + (m_vConstraints[0][i]->m_vModuleList.size()/2));
+
+        m_saSymList.insert(m_saSymList.begin(),
+                           m_vConstraints[0][i]->m_vModuleList.begin() + (m_vConstraints[0][i]->m_vModuleList.size()/2),
+                           m_vConstraints[0][i]->m_vModuleList.end());
+
+        m_saBlockHash.reserve(m_saBlockList.size());
+        for(auto iter = m_saBlockHash.begin(); iter != m_saBlockHash.end(); ++iter){
+            iter->second = new Block;
+        }
+
+        int iter = 0;
+        int numProcess = 0;
+        int numTry = 0;
+
+        while(isTimeout(startTime) == false){   // TIME_LIMIT: 3000 sec
+            initialPlace(m_vConstraints[0][i]->getName(), m_vConstraints[0][i]);
+ 
+
+
+        }
+
+
+    }
     
 
-    /*
-     if(_hbtree)delete _hbtree;
-     if(_recoverMsg) delete _recoverMsg;
-    */
+    std::cout << "Start Place[FINISHED]" << std::endl;
+}
+
+void Placer::initialPlace(std::string, Block* blk){
+    if( (rand() % 6) == 0 ) srand((unsigned)time(NULL));
+
+
+
+
 }
