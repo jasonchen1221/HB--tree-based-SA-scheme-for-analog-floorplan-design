@@ -5,6 +5,10 @@
 #include "block.hpp"
 #include "net.hpp"
 #include "pin.hpp"
+#include "bTree.hpp"
+#include "recoverMsg.hpp"
+#include "contour.hpp"
+
 #include <cstdlib>
 #include <set>
 #include <map>
@@ -65,14 +69,26 @@ public:
     double m_N;
     double m_I; // # of iter upper bound
 
-/* Placer */
-    void clearLists();
+/* Pre works of Placer */
     void constructHierarchicalModuleClusteringTree();
     void setSymmetryChild();
     void mergeSymmetryConstraint();
     void setWellIsland();
     double interWellPlaceModules(Block* blk);
 
+/* Placer */
+    void place();
+    void initialPlace(std::string, Block* blk);
+
+    std::vector<Block*> m_saBlockList;
+    std::vector<Block*> m_saSymList;
+    std::vector<Block*> m_saNewBlockList;
+    std::unordered_map<std::string, Block*> m_saBlockHash;
+    
+/* Helper */
+    void clearLists();
+    void clearSAList();
+    bool isTimeout(const time_t& start) const;
 
 private:
 /* alpha */
@@ -99,9 +115,19 @@ private:
     std::map<std::string, std::vector<std::string>> m_levelMap; //SELF 
     std::map<std::string, std::vector<std::pair<std::string,std::string>>> m_levelMapPair;  //SYMMETRY
 
+/* B-tree */
+    BTree*                        m_BTree;
+    BTree*                        m_HBTree;
+    RecoverMsg*                   m_recoverMsg;
+    std::map<std::string, BTree*> m_BStar;
+
+/* */
+    double m_ttlArea;
+
+
 /* Help Functions */
     void splitString(std::string str, std::vector<std::string>& vec);
-
+    void calTtlArea();
 };
 
 

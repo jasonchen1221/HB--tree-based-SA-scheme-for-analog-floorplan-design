@@ -504,26 +504,6 @@ bool Placer::parseGrpFile(std::string grpFile, bool verbose){
     return true;
 }
 
-void Placer::splitString(std::string str, std::vector<std::string>& vec){
-    std::vector<std::string> words;
-    int tmp = 0, i = 0, width = 0;
-    std::string word;
-
-    while( i < str.length() ){
-        while( (str[i] == ' ') || (str[i] == '\t') || (str[i] == '\r') ){
-            i++;
-        }
-        tmp = i;
-        width = 0;
-        while( (str[i] != ' ') && (str[i] != '\t') && (str[i] != '\r') && (i < str.length()) ){
-            i++;
-            width++;
-        }
-        word = str.substr(tmp,width);
-        words.push_back(word);
-    }
-    vec = words;
-}
 
 void Placer::showInfo(bool verbose, std::string flag){
     if(verbose){
