@@ -90,6 +90,8 @@ void BTree::insertT(Block* blk){
     }
 
     m_size++;
+
+    assert(m_size > 0);
 }  
 
 void BTree::insertRnd(Block* blk, bool isSelf){
@@ -127,18 +129,196 @@ void BTree::insertRnd(Block* blk, bool isSelf){
     }
 
     m_size++;
+
+    assert(m_size > 0);
 }
 
 void BTree::insertRnd_Hierarchy(Block* blk, bool isSelf){
+    static bool LR = false;     // true: left ; flase: right
+    bool SYM = false;
 
+    if((isEmpty() || (isSelf && isEmpty())) && (blk->m_isContour == false)){
+        m_root = blk;
+        m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
+        blk->m_pParent = m_dummyNode;
+
+        if(blk->m_isHierarchical) SYM = true;
+        else                      SYM = false;
+    }
+    else{
+        Block* ptr = m_root;
+        Block* pos = ptr;
+
+        while(ptr != nullptr){
+            pos = ptr;
+            if(rand() % 2 || isSelf || ptr->m_isContour){
+                ptr = ptr->m_pRight;
+                LR = false;
+            }
+            else{
+                ptr = ptr->m_pLeft;
+                LR = true;
+            }
+        }
+
+        if(LR == true){
+            pos->m_pLeft = blk;
+            if(blk->m_isHierarchical) SYM = true;
+            else                      SYM = false;
+        }
+        else{   // LR == false
+            pos->m_pRight = blk;
+            if(blk->m_isHierarchical) SYM = true;
+            else                      SYM = false;
+        }
+
+        blk->m_pParent = pos;
+    }
+
+    ++m_size;
+
+    if(SYM == true){    // blk is Hierarchical
+        blk->m_pRight = blk->m_vHLContour[0];
+        blk->m_vHLContour[0]->m_pParent = blk;
+        ++m_size;
+    }
+
+    assert(m_size > 0);
 }
 
 void BTree::insertRnd_HB(Block* blk){
+    static bool LR = false;     // true: left ; false: right
+    bool SYM = false;
 
+    if(isEmpty() && (blk->m_isContour == false)){
+        m_root = blk;
+        m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
+        blk->m_pParent = m_dummyNode;
+        
+        if(blk->m_isHierarchical == true) SYM = true;
+        else                              SYM = false;
+    }
+    else{
+        Block* ptr = m_root;
+        Block* pos = ptr;
+
+        while(ptr != nullptr){
+            pos = ptr;
+            if(rand() % 2 && (ptr->m_isContour == false)){
+                ptr = ptr->m_pLeft;
+                LR = true;
+            }
+            else{
+                ptr = ptr->m_pRight;
+                LR = false;
+            }
+        }
+
+        if(LR == true){
+            pos->m_pLeft = blk;
+            if(blk->m_isHierarchical == true) SYM = true;
+            else                              SYM = false;  
+        }
+        else{   // LR == false
+            pos->m_pRight = blk;
+            if(blk->m_isHierarchical == true) SYM = true;
+            else                              SYM = false;
+        }
+        blk->m_pParent = pos;
+    }
+
+    ++m_size;
+
+    if(SYM == true){
+        for(int i = 0; i < blk->m_vHLContour.size(); ++i){
+            if(i == 0){
+                blk->m_pRight = blk->m_vHLContour[i];
+                blk->m_vHLContour[i]->m_pParent = blk;
+                ++m_size;
+            }
+            else{
+                blk->m_vHLContour[i-1]->m_pLeft = blk->m_vHLContour[i];
+                blk->m_vHLContour[i]->m_pParent = blk->m_vHLContour[i-1];
+                ++m_size;
+            }
+        }
+    }
+
+    assert(m_size > 0);
 }
 
-void BTree::deleteT(Block* blk){
+void BTree::deleteT(Block* ptr){
+    assert(m_size != 0);
 
+    bool isRoot = false;
+    if(ptr->m_pParent == m_dummyNode){
+        isRoot = true;
+    }
+
+    // Case1
+    if(ptr->m_pLeft == nullptr && ptr->m_pRight == nullptr){
+        if(isRoot == false){
+            if(ptr == (ptr->m_pParent)->m_pLeft){
+                (ptr->m_pParent)->m_pLeft = nullptr;
+            }
+            else{
+                (ptr->m_pParent)->m_pRight= nullptr;
+            }
+        }
+        else{   // isRoot == true
+            m_dummyNode->m_pLeft = nullptr;
+            m_dummyNode->m_pRight = nullptr;
+            m_root = m_dummyNode;
+        }
+    }
+    // Case2
+    else if(ptr->m_pLeft != nullptr && ptr->m_pRight == nullptr){
+        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pLeft);
+        else                setRoot(ptr->m_pLeft, (ptr->m_pLeft)->m_pLeft, (ptr->m_pLeft)->m_pRight);
+    }
+    // Case3
+    else if(ptr->m_pLeft == nullptr && ptr->m_pRight != nullptr){
+        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pRight);
+        else                setRoot(ptr->m_pRight, (ptr->m_pRight)->m_pLeft, (ptr->m_pRight)->m_pRight);
+    }
+    // Case4
+    else{   // ptr has left child and right child
+        Block* Min = treeMin(ptr->m_pRight);
+        
+        if(isRoot == false){
+            if(Min->m_pParent != ptr){
+                treeNodeDieCover(Min, Min->m_pRight, false);
+                Min->m_pRight = ptr->m_pRight;
+                (Min->m_pRight)->m_pParent = Min;
+            }
+
+            Min->m_pParent = ptr->m_pParent;
+            if(ptr == (ptr->m_pParent)->m_pRight){
+                (ptr->m_pParent)->m_pRight = Min;
+            }
+            else{
+                (ptr->m_pParent)->m_pLeft = Min;
+            }
+
+            Min->m_pLeft = ptr->m_pLeft;
+            (Min->m_pLeft)->m_pParent = Min;
+        }
+        else{
+            if(Min->m_pParent != ptr){
+                treeNodeDieCover(Min, Min->m_pRight, false);
+                Min->m_pRight = ptr->m_pRight;
+                if((ptr->m_pRight)->m_pRight != nullptr){
+                    (Min->m_pRight)->m_pParent = Min;
+                }
+            }
+            setRoot(Min, ptr->m_pLeft, Min->m_pRight);
+            (ptr->m_pLeft)->m_pParent = m_root;
+        }
+    }
+
+    --m_size;
+    assert(m_size >= 0);
+    return;
 }
 
 void BTree::setRoot(Block* r, Block* left = nullptr, Block* right = nullptr){
@@ -175,22 +355,67 @@ void BTree::reset(){
     m_size = 0;
 }
 
-Block* BTree::treeMin(Block* root) const{
-    assert(root != nullptr);
+Block* BTree::treeMin(Block* ptr) const{
+    assert(ptr != nullptr);
 
+    while(ptr->m_pLeft != nullptr){
+        ptr = ptr->m_pLeft;
+    }
+    return ptr;
+}
+
+Block* BTree::treeMax(Block* ptr) const{
+    assert(ptr != nullptr);
+
+    std::cout << "function treeMax" << std::endl;
+    std::cout << ptr->m_name << std::endl;
+
+    while(ptr->m_pRight != nullptr){
+        std::cout << ptr->m_pRight->m_name << std::endl;
+        ptr = ptr->m_pRight;
+    }
+    return ptr;
+}
+
+Block* BTree::treeSuccessor(Block* ptr) const{
+    assert(ptr != nullptr);
     
+    if(ptr->m_pRight != nullptr){
+        return treeMin(ptr->m_pRight);
+    }
+
+    Block* tmp = ptr->m_pParent;
+    while(tmp != nullptr && ptr == tmp->m_pRight){
+        ptr = tmp;
+        tmp = tmp->m_pParent;
+    }
+
+    if(tmp == nullptr){
+        return ptr;
+    }
+    else{
+        return tmp;     // the last one will return dummy
+    }
 }
 
-Block* BTree::treeMax(Block* root) const{
+Block* BTree::treePredeccessor(Block* ptr) const{
+    assert(ptr != nullptr);
+    if(ptr->m_pLeft != nullptr){
+        return treeMax(ptr->m_pLeft);
+    }    
 
-}
+    Block* tmp = ptr->m_pParent;
+    while(tmp != nullptr && ptr == tmp->m_pLeft){
+        ptr = tmp;
+        tmp = tmp->m_pParent;
+    }
 
-Block* BTree::treeSuccessor(Block* root) const{
-
-}
-
-Block* BTree::treePredeccessor(Block* root) const{
-
+    if(tmp == nullptr){
+        return ptr;
+    }
+    else{
+        return tmp;     // the last one will return dummy
+    }
 }
 
 /* -----------------------------B*-tree Perturbation Methods----------------------------- */

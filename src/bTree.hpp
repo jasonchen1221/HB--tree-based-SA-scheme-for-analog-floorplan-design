@@ -33,15 +33,15 @@ public:
     void insertRnd(Block* blk, bool isSelf);
     void insertRnd_Hierarchy(Block* blk, bool isSelf);
     void insertRnd_HB(Block* blk);
-    void deleteT(Block* blk);
+    void deleteT(Block* ptr);
     void setRoot(Block* root, Block* left = nullptr, Block* right = nullptr);
     //void treeTransplate(Block* die, Block* cover, bool kill = true);
     void treeNodeDieCover(Block* die, Block* cover, bool kill = true);
     void reset();
-    Block* treeMin(Block* root) const;
-    Block* treeMax(Block* root) const;
-    Block* treeSuccessor(Block* root) const;
-    Block* treePredeccessor(Block* root) const;
+    Block* treeMin(Block* ptr) const;
+    Block* treeMax(Block* ptr) const;
+    Block* treeSuccessor(Block* ptr) const;
+    Block* treePredeccessor(Block* ptr) const;
 
 /* Setters & Getters */
     void    setRoot(Block* b)               { m_root = b; }
@@ -53,6 +53,19 @@ public:
     double  getArea() const                 { return m_width * m_height; }
     bool    isEmpty() const                 { return (m_size == 0); }
     Block*  getRoot() const                 { return m_root; }
+
+/* Packing */
+    void packing();
+    void packing_Hierarchy();
+    void packing_HB();
+    
+    void treePack(Block* blk);
+    void treePack_Hierarchy(Block* blk);
+    void treePack_HB(Block* blk);
+    void checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
+    void checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
+    void compactX(Block* blk, bool isFirst);
+    void compactY(Block* blk);
 
 /* B*-tree Perturbation Methods */
     void swapBlk(Block* blkA, Block* blkB);
@@ -70,19 +83,6 @@ public:
     void leftRotateB(Block* blk);
     void rightRotateB(Block* blk);
     Block* deleteAndInsert(Block* blk); //ruturen the chosen null block*
-
-/* Packing */
-    void packing();
-    void packing_Hierarchy();
-    void packing_HB();
-    
-    void treePack(Block* blk);
-    void treePack_Hierarchy(Block* blk);
-    void treePack_HB(Block* blk);
-    void checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
-    void checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
-    void compactX(Block* blk, bool isFirst);
-    void compactY(Block* blk);
 
 private:
     Block*                          m_dummyNode;
