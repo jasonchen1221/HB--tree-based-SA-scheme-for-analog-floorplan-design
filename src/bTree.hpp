@@ -34,9 +34,9 @@ public:
     void insertRnd_Hierarchy(Block* blk, bool isSelf);
     void insertRnd_HB(Block* blk);
     void deleteT(Block* ptr);
-    void setRoot(Block* root, Block* left = nullptr, Block* right = nullptr);
-    //void treeTransplate(Block* die, Block* cover, bool kill = true);
-    void treeNodeDieCover(Block* die, Block* cover, bool kill = true);
+    void setRoot(Block* root, Block* left, Block* right);
+    //void treeTransplate(Block* die, Block* cover, bool kill);
+    void treeNodeDieCover(Block* die, Block* cover, bool kill);
     void reset();
     Block* treeMin(Block* ptr) const;
     Block* treeMax(Block* ptr) const;

@@ -32,11 +32,11 @@ void BTree::printInvList() const{
         p_Blk = treePredeccessor(p_Blk);
     }
 }
-             
+/*             
 void BTree::printContourLines() const{
     // print the contourlines
     m_contourMgr.printLines();
-}
+}*/
     
 void BTree::treePrint(Block* blk, int n) const{
     for(int i = 0; i < n; ++i){
@@ -273,12 +273,12 @@ void BTree::deleteT(Block* ptr){
     }
     // Case2
     else if(ptr->m_pLeft != nullptr && ptr->m_pRight == nullptr){
-        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pLeft);
+        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pLeft, true);
         else                setRoot(ptr->m_pLeft, (ptr->m_pLeft)->m_pLeft, (ptr->m_pLeft)->m_pRight);
     }
     // Case3
     else if(ptr->m_pLeft == nullptr && ptr->m_pRight != nullptr){
-        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pRight);
+        if(isRoot == false) treeNodeDieCover(ptr, ptr->m_pRight, true);
         else                setRoot(ptr->m_pRight, (ptr->m_pRight)->m_pLeft, (ptr->m_pRight)->m_pRight);
     }
     // Case4
