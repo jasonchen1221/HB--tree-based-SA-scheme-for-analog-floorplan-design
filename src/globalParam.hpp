@@ -96,11 +96,12 @@ class Pin;
 class Net;
 
 class BTree;
-class ContourLine;
-class ContourMgr;
-
 class RecoverMsg;
 
+class ContourLine;
+class ContourMgr;
+typedef std::pair<double, double> Interval;
+typedef std::pair<double, double> Interval_v;
 
 struct LDEParam{
     double          SD = 0;
