@@ -7,7 +7,7 @@
 #include "pin.hpp"
 #include "bTree.hpp"
 #include "recoverMsg.hpp"
-#include "contour.hpp"
+#include "contourline.hpp"
 
 #include <cstdlib>
 #include <set>

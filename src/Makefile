@@ -4,11 +4,11 @@ EXE = LDEPlace.exe
 CFLAGS = -g -Wall -O3
 
 OBJS = main.o block.o net.o parser.o setDevice.o \
-	   placer.o helper.o bTree.o contour.o
+	   placer.o helper.o bTree.o contourline.o
 
 HEADERS = placer.hpp globalParam.hpp block.hpp \
           net.hpp pin.hpp parser.hpp recoverMsg.hpp \
-		  bTree.hpp contour.hpp
+		  bTree.hpp contourline.hpp
 
 $(EXE): $(OBJS)
 	@echo ">> Building $(EXE) ..."

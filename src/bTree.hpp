@@ -3,7 +3,7 @@
 
 #include "globalParam.hpp"
 #include "block.hpp"
-#include "contour.hpp"
+#include "contourline.hpp"
 
 using std::map; using std::string; using std::pair;
 using std::vector;
