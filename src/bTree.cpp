@@ -32,11 +32,11 @@ void BTree::printInvList() const{
         p_Blk = treePredeccessor(p_Blk);
     }
 }
-/*             
+             
 void BTree::printContourLines() const{
     // print the contourlines
     m_contourMgr.printLines();
-}*/
+}
     
 void BTree::treePrint(Block* blk, int n) const{
     for(int i = 0; i < n; ++i){
