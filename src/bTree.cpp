@@ -60,6 +60,14 @@ void BTree::play(){
 
 /* --------------------------------Binary Tree Operations-------------------------------- */
 void BTree::insertT(Block* blk){
+    /*
+        0.  Tree structure: m_dummyNode -> m_root -> ...
+        1.  Insert one new block into binary tree
+        2.  If tree is not empty, when insert a new blk,
+            start from m_root
+            if new blk is wider than ptr's -> add as left child
+            else if new blk is not wider than ptr's -> add as right child
+    */
     if(isEmpty()){
         m_root = blk;
         m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
@@ -95,6 +103,11 @@ void BTree::insertT(Block* blk){
 }  
 
 void BTree::insertRnd(Block* blk, bool isSelf){
+    /*
+        1.  Insert one new blk
+        2.  If blk is isSelf : must add as ptr's right child
+            If blk is not isSelf : 50% add as left child ; 50% add as right child
+    */
     static bool LR = false; // true: left ; false: right
 
     if(isEmpty() || (isSelf && isEmpty())){
@@ -134,6 +147,13 @@ void BTree::insertRnd(Block* blk, bool isSelf){
 }
 
 void BTree::insertRnd_Hierarchy(Block* blk, bool isSelf){
+    /*
+        1.  add a new blk into Hierarchy
+        2.  If new blk is isSelf -> must move right
+            If ptr is contour node -> must move right
+            else : 50% move left, 50% move right
+        3.  If blk is hierarchical node -> set contour nodes on blk's right child
+    */
     static bool LR = false;     // true: left ; flase: right
     bool SYM = false;
 
@@ -187,6 +207,11 @@ void BTree::insertRnd_Hierarchy(Block* blk, bool isSelf){
 }
 
 void BTree::insertRnd_HB(Block* blk){
+    /*
+        1.  blk: 50% move to left, 50% move to right
+            but, if ptr point to contour node : must move to right
+        2.  if blk is hierarchical node -> add contour nodes on ptr's right child
+    */
     static bool LR = false;     // true: left ; false: right
     bool SYM = false;
 
@@ -248,6 +273,17 @@ void BTree::insertRnd_HB(Block* blk){
 }
 
 void BTree::deleteT(Block* ptr){
+    /*
+        1.  delete one block(which is ptr pointing to) in the binary tree
+        2.  case1 : leaf node: just delete
+            case2 : w/ left children but w/o right child : replace the deleted one with it's left child
+            case3 : w/ right children but w/o left child : replace the deleted one with it's right child
+            case4 : w/ left children and w/ right children
+                 first find the ptr's right child's left-most child (Min)
+                 replace the deleted one with this "Min node"
+                 ("Min node" is replaced by its right child)
+    */
+    
     assert(m_size != 0);
 
     bool isRoot = false;
@@ -322,6 +358,10 @@ void BTree::deleteT(Block* ptr){
 }
 
 void BTree::setRoot(Block* r, Block* left = nullptr, Block* right = nullptr){
+    /*
+        set m_root as r
+        set left and right by arguments
+    */
     m_root = r;
     m_root->m_pParent = m_dummyNode;
     m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
@@ -350,6 +390,9 @@ void BTree::treeNodeDieCover(Block* die, Block* cover, bool kill = true){
 }
 
 void BTree::reset(){
+    /*
+        clear the binary tree
+    */
     m_root = m_dummyNode;
     m_dummyNode = m_dummyNode = nullptr;
     m_size = 0;
@@ -378,6 +421,12 @@ Block* BTree::treeMax(Block* ptr) const{
 }
 
 Block* BTree::treeSuccessor(Block* ptr) const{
+    /*
+        1.  This function: to get ptr's successor
+        2.  If ptr has right child, return ptr's right child's treeMin
+            If ptr doesn't have right child and ptr is someone's left child, return ptr's parent 
+            If not, recursively goes up until the node is not someone's right child
+    */
     assert(ptr != nullptr);
     
     if(ptr->m_pRight != nullptr){

@@ -73,13 +73,13 @@ private:
 
     Constraint           m_constraint;
 
-    bool                 m_isHierarchical;
-    bool                 m_isWellHiearchical;
-    bool                 m_isSelf;
-    bool                 m_isContour;
+    bool                 m_isHierarchical;      // 1: this block is Hierarchical node
+    bool                 m_isWellHiearchical;   // 1: this block is WellHiearchical node
+    bool                 m_isSelf;              // 1. this block is self symmetry node
+    bool                 m_isContour;           // 1: this block is contour node
     
     std::vector<Block*>   m_vModuleList;
-    std::vector<Block*>   m_vHLContour;
+    std::vector<Block*>   m_vHLContour;     // Horizontal Contour Nodes
     std::vector<Contour*> m_vVLContour;
     std::vector<Contour*> m_vBotContour;
 };
