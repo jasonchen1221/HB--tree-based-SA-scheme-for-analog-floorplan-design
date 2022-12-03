@@ -467,6 +467,158 @@ Block* BTree::treePredeccessor(Block* ptr) const{
     }
 }
 
+
+/* -------------------------------------Packing------------------------------------- */
+void BTree::compactX(Block* blk, bool isFirst){
+    /* x-direction compaction */
+    /* set vertical contourlines */
+    if(blk == nullptr && isFirst){
+        blk = m_root;
+        m_contourMgr.reset();
+        m_root->m_x = 0;
+        m_root->m_y = 0;
+        m_contourMgr.insert(
+            Interval(m_root->m_y, m_root->m_y + m_root->m_height),
+            m_root->m_width,
+            m_root->m_height
+        );
+    }
+
+    Block* left  = blk->m_pLeft;
+    Block* right = blk->m_pRight;
+    Interval inter;
+
+    // update m_width * m_height
+    if(blk->m_x + blk->m_width > m_width)
+        m_width = blk->m_x + blk->m_width;
+    if(blk->m_y + blk->m_height > m_height)
+        m_height = blk->m_y + blk->m_height;
+
+    if(right != nullptr){
+        inter.first = right->m_y;
+        inter.second = right->m_y + right->m_height;
+        right->m_x = m_contourMgr.insert(
+            inter,
+            right->m_width,
+            right->m_height
+        );
+        compactX(right, false);
+    }
+    if(left != nullptr){
+        inter.first = left->m_y;
+        inter.second = left->m_y + left->m_height;
+        left->m_x = m_contourMgr.insert(
+            inter,
+            left->m_width,
+            left->m_height
+        );
+        compactX(left, false);
+    }
+
+    return;
+}
+
+void BTree::compactY(Block* blk){
+    /* y-direction compaction */
+    /* set horizontal contourlines */
+    Block* left = blk->m_pLeft;
+    Block* right = blk->m_pRight;
+    Interval inter;
+
+    if(left != nullptr){
+        inter.first = left->m_x;
+        inter.second = left->m_x + left->m_width;
+        left->m_y = m_contourMgr.insert(
+            inter,
+            left->m_height,
+            left->m_width
+        );
+        compactY(left);
+    }
+
+    if(right != nullptr){
+        inter.first = right->m_x;
+        inter.second = right->m_x + right->m_width;
+        right->m_y = m_contourMgr.insert(
+            inter,
+            right->m_height,
+            right->m_width
+        );
+        compactY(right);
+    }
+
+    return;
+}
+
+void BTree::treePack(Block* blk){
+    Block* left  = blk->m_pLeft;
+    Block* right = blk->m_pRight;
+    Interval inter;
+
+    // Update the boundary of placement
+    if(blk->m_x + blk->m_width > m_width){
+        m_width = blk->m_x + blk->m_width;
+    }
+    if(blk->m_y + blk->m_height > m_height){
+        m_height = blk->m_y + blk->m_height;
+    }
+
+    if(left != nullptr){
+        left->m_x = blk->m_x + blk->m_width;
+        inter.first = left->m_x;
+        inter.second = left->m_x + left->m_width;
+        left->m_y = m_contourMgr.insert(
+            inter,
+            left->m_height, 
+            left->m_width
+        );
+        treePack(left);
+    }
+
+    if(right != nullptr){
+        right->m_x = blk->m_x;
+        inter.first = right->m_x;
+        inter.second = right->m_x + right->m_width;
+        right->m_y = m_contourMgr.insert(
+            inter,
+            right->m_height,
+            right->m_width
+        );
+        treePack(right);
+    }
+
+    return;
+}
+
+void BTree::packing(){
+
+}
+
+void BTree::checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck){
+
+}
+
+void BTree::checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck){
+
+}
+
+void BTree::treePack_HB(Block* blk){
+
+}
+
+void BTree::packing_HB(){
+
+}
+
+void BTree::treePack_Hierarchy(Block* blk){
+
+}
+
+void BTree::packing_Hierarchy(){
+
+}
+
+
 /* -----------------------------B*-tree Perturbation Methods----------------------------- */
 /*
 void BTree::swapBlk(Block* blkA, Block* blkB){

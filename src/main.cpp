@@ -1,6 +1,8 @@
 #include <iostream>
 #include "placer.hpp"
 
+using std::cout;
+using std::endl;
 time_t startTime;
 
 int main(int argc, char* argv[]){
@@ -24,8 +26,37 @@ int main(int argc, char* argv[]){
 
     // Testing BTree and Contourlines
     BTree btree;
-    //btree.printTree();
-    //btree.printList();
+
+    Block* blk_1 = new Block; blk_1->setName("b1"); blk_1->setW(5); blk_1->setH(3);
+    Block* blk_2 = new Block; blk_2->setName("b2"); blk_2->setW(7); blk_2->setH(2);
+    Block* blk_3 = new Block; blk_3->setName("b3"); blk_3->setW(6); blk_3->setH(4);
+
+    btree.insertT(blk_1);
+    cout << "Inserting blk_1" << endl;
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+    cout << blk_1->getX() << "," << blk_1->getY() << endl; 
+    
+    btree.insertT(blk_2);
+    cout << "Inserting blk_2" << endl;
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+    cout << blk_2->getX() << "," << blk_2->getY() << endl; 
+
+    btree.insertT(blk_3);
+    cout << "Inserting blk_3" << endl;
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+    cout << blk_3->getX() << "," << blk_3->getY() << endl; 
+
+    // ContourLines will be set when packing
+    //std::cout << "Print Tree ContourLines: " << std::endl;
     //btree.printContourLines();
 
 

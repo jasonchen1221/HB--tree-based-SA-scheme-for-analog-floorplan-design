@@ -55,17 +55,20 @@ public:
     Block*  getRoot() const                 { return m_root; }
 
 /* Packing */
-    void packing();
-    void packing_Hierarchy();
-    void packing_HB();
-    
-    void treePack(Block* blk);
-    void treePack_Hierarchy(Block* blk);
-    void treePack_HB(Block* blk);
-    void checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
-    void checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
     void compactX(Block* blk, bool isFirst);
     void compactY(Block* blk);
+
+    void treePack(Block* blk);
+    void packing();
+
+    void checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
+    void checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck);
+
+    void treePack_HB(Block* blk);
+    void packing_HB();
+
+    void treePack_Hierarchy(Block* blk);
+    void packing_Hierarchy();
 
 /* B*-tree Perturbation Methods */
     void swapBlk(Block* blkA, Block* blkB);
