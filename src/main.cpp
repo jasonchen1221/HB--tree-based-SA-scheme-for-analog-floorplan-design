@@ -76,7 +76,10 @@ int main(int argc, char* argv[]){
     std::cout << "Print Tree ContourLines: " << std::endl;
     btree.printContourLines();
 
-
+    cout << "b1: " << blk_1->getX() << "," << blk_1->getY() << endl; 
+    cout << "b2: " << blk_2->getX() << "," << blk_2->getY() << endl; 
+    cout << "b3: " << blk_3->getX() << "," << blk_3->getY() << endl; 
+    cout << "b4: " << blk_4->getX() << "," << blk_4->getY() << endl; 
 
     return 0;
 }

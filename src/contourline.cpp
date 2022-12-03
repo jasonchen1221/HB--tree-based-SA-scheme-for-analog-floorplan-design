@@ -73,7 +73,7 @@ void ContourMgr::printLines() const{
     while(ptr != nullptr){
         std::cout << ptr->m_height << " "
                   << "(" << ptr->getFirst() << ","
-                  << ptr->getSecond() << ")";
+                  << ptr->getSecond() << ")" << " ";
         /* print ptr->front */
         if(ptr->m_front != nullptr){
             std::cout << "F: " << ptr->m_front->m_intvLine.first << " "
