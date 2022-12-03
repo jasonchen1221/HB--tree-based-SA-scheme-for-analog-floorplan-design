@@ -7,6 +7,7 @@
 
 class ContourLine{
     friend class ContourMgr;
+
 public:
     ContourLine(
         ContourLine* front = nullptr, ContourLine* back = nullptr, 
@@ -32,8 +33,11 @@ private:
     double       m_height;   // the height of this interval    
 };
 
+
+
 class ContourLine_v{
     friend class ContourMgr;
+
 public:
     ContourLine_v(
         ContourLine_v* bottom = nullptr, ContourLine_v* up = nullptr, 
@@ -49,6 +53,7 @@ public:
     void reszieFromFront_v(double s) { m_intvLine_v.second = s; }
     void resizeFromBack_v(double s)  { m_intvLine_v.first = s; }
     bool isValid_v() const           { return ((m_intvLine_v.second - m_intvLine_v.first) > 0); }
+
 private:
     ContourLine_v* m_bottom;    
     ContourLine_v* m_up;     
@@ -56,9 +61,12 @@ private:
     double         m_width;   
 };
 
+
+
 class ContourMgr{
     friend class BTree;
     friend class Placer;
+
 public:
     ContourMgr(){
         m_dummy = new ContourLine;
@@ -77,19 +85,19 @@ public:
         delete m_tail;
     }
 
-    void setWidth(double);
-    void setHeight(double, double);
-    void setWidth_HB(double);
-    void setHeight_HB(double, double);
+    void setWidth(double width);
+    void setHeight(double h1, double h2);
+    void setWidth_HB(double width);
+    void setHeight_HB(double h1, double h2);
     
     double getMaxX() const { return m_maxX; }
     double getMaxY() const { return m_maxY; }
 
-    double insert(const Interval, double, double);
-    double insert_HB(const Interval, double, double, bool, bool, bool, bool, bool);
+    double insert(const Interval inter1, double h, double w);
+    double insert_HB(const Interval inter, double h, double w, bool cm, bool val, bool HI, bool VI, bool paircheck);
 
-    void deleteL(ContourLine* die);
-    void deleteR(ContourLine_v* die);
+    void deleteL(ContourLine* die);     /* delete horizontal contourLine */
+    void deleteR(ContourLine_v* die);   /* delete vertical contourLine_v */
     void reset();
     void reset_HB();
 
@@ -106,8 +114,8 @@ private:
     double                  m_origin;
     double                  m_maxX;
     double                  m_maxY;
-    std::vector<Contour*>   m_horizontal;
-    std::vector<Contour*>   m_vertical;
+    std::vector<Contour*>   m_vHorizontal;
+    std::vector<Contour*>   m_vVertical;
 };
 
 
