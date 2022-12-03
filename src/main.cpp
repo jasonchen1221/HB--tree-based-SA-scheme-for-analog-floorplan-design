@@ -11,7 +11,7 @@ int main(int argc, char* argv[]){
     // alpha, blkFile, netFile, grpFile
     //placer.parseAll(argv[1], argv[2], argv[3], argv[4]);    
         /* testing parser */
-        placer.parseAlpha(argv[1], false);
+/*        placer.parseAlpha(argv[1], false);
         placer.parseBlkFile(argv[2], false);
         placer.parseNetFile(argv[3], false);
         placer.parseGrpFile(argv[4], false);
@@ -20,7 +20,15 @@ int main(int argc, char* argv[]){
     
     placer.constructHierarchicalModuleClusteringTree();
     placer.place();
-    
+*/  
+
+    // Testing BTree and Contourlines
+    BTree btree;
+    //btree.printTree();
+    //btree.printList();
+    //btree.printContourLines();
+
+
 
     return 0;
 }
