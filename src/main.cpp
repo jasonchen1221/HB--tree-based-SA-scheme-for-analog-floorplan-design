@@ -30,6 +30,7 @@ int main(int argc, char* argv[]){
     Block* blk_1 = new Block; blk_1->setName("b1"); blk_1->setW(5); blk_1->setH(3);
     Block* blk_2 = new Block; blk_2->setName("b2"); blk_2->setW(7); blk_2->setH(2);
     Block* blk_3 = new Block; blk_3->setName("b3"); blk_3->setW(6); blk_3->setH(4);
+    Block* blk_4 = new Block; blk_4->setName("b4"); blk_4->setW(2); blk_4->setH(5);
 
     btree.insertT(blk_1);
     cout << "Inserting blk_1" << endl;
@@ -55,9 +56,25 @@ int main(int argc, char* argv[]){
     btree.printList();
     cout << blk_3->getX() << "," << blk_3->getY() << endl; 
 
+    btree.insertT(blk_4);
+    cout << "Inserting blk_4" << endl;
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+    cout << blk_4->getX() << "," << blk_4->getY() << endl; 
+
+    cout << "test root:" << endl;
+    cout << btree.getRoot()->getName() << " " 
+         << btree.getRoot()->getX() << " "
+         << btree.getRoot()->getW() << " "
+         << btree.getRoot()->getH() << endl;
+
     // ContourLines will be set when packing
-    //std::cout << "Print Tree ContourLines: " << std::endl;
-    //btree.printContourLines();
+    cout << "----------Packing----------" << endl;
+    btree.packing();
+    std::cout << "Print Tree ContourLines: " << std::endl;
+    btree.printContourLines();
 
 
 
