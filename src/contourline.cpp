@@ -184,10 +184,11 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
     /* Case 1: only one line concerned */
     if(firstLine == lastLine){
         ContourLine* middleLine = new ContourLine(firstLine, nullptr, inter1, max + h);
-        ContourLine* backLine = 
-        new ContourLine(middleLine, firstLine->m_back, 
-                        Interval(inter1.second, firstLine->getSecond()),
-                        firstLine->m_height);
+        ContourLine* backLine = new ContourLine(
+            middleLine, 
+            firstLine->m_back, 
+            Interval(inter1.second, firstLine->getSecond()),
+            firstLine->m_height);
         middleLine->m_back = backLine;
 
         if(firstLine->m_back != nullptr){
@@ -229,6 +230,8 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
             deleteL(lastLine);
     }
 
+    //std::cout << "debug0: done here" << std::endl;
+
     /* update the _maxY of the overall contour line */
     if(max + h > m_maxY){
         m_maxY = max + h;
@@ -257,7 +260,9 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
         m_vHorizontal.pop_back();
     }
 
-    for(int c = 0; c < m_vHorizontal.size(); ++c){
+    //std::cout << "debug1: done here" << std::endl;
+    
+    for(int c = 0, size = m_vHorizontal.size(); c < size; ++c){
         if(c == 0){
             m_vHorizontal[c]->x = 
             (2 * INIT - (m_vHorizontal[c]->x + (double)m_vHorizontal[c]->w/(double)2))
@@ -266,17 +271,18 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
             m_vHorizontal[c]->w = m_vHorizontal[c]->y - m_vHorizontal[c]->x;
         }
         else{
-            Contour* tmp = new Contour;
-            tmp->x =
+            Contour* t = new Contour;
+            t->x =
             (2 * INIT - (m_vHorizontal[c]->x + (double)m_vHorizontal[c]->w/(double)2))
             - (double)m_vHorizontal[c]->w/(double)2;
-            tmp->y = tmp->x + m_vHorizontal[c]->w;
-            tmp->w = m_vHorizontal[c]->w;
-            tmp->max = m_vHorizontal[c]->max;
-            m_vHorizontal.push_back(tmp);
+            t->y = t->x + m_vHorizontal[c]->w;
+            t->w = m_vHorizontal[c]->w;
+            t->max = m_vHorizontal[c]->max;
+            m_vHorizontal.push_back(t);
         }
     }
 
+    //std::cout << "debug2: done here" << std::endl;
     /* =====================End of horizontal contour lines===================== */  
 
     
@@ -339,6 +345,7 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
         pt = pt->m_up;
     }
 
+    //std::cout << "debug3: done here" << std::endl;
 
     if(k == 0){     
         /* Finally, below are two cases for maintaining the list 
@@ -377,6 +384,9 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
             if(upLine->isValid_v() == false)
                 deleteR(upLine);
         }
+
+        //std::cout << "debug4: done here" << std::endl;
+    
     }
 
     if(k == 1){ 
@@ -397,6 +407,8 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
     if( (max2+ w) > m_maxX ){
         m_maxX = max2 + w;
     }
+
+    //std::cout << "debug5: done here" << std::endl;
 
     /* update vertical contour lines, i.e. vector<Contour*> m_vVertical */
     m_vVertical.clear();
@@ -422,7 +434,10 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
         m_vVertical.pop_back();
     }
 
-    for(int c = 0; c < m_vVertical.size(); ++c){
+    //std::cout << "debug6: done here" << std::endl;
+    //std:: cout << "m_vVertical.size(): " << m_vVertical.size() << std::endl;
+
+    for(int c = 0, size = m_vVertical.size(); c < size; ++c){
         Contour* t = new Contour;
         t->x = m_vVertical[c]->x;
         t->y = m_vVertical[c]->y;
@@ -431,6 +446,9 @@ double ContourMgr::insert(const Interval inter1, double h, double w){
         m_vVertical.push_back(t);
     }
     /* =====================End of vertical contour lines===================== */
+    
+    //std::cout << "debug8: done here" << std::endl;
+
     return max;
 }
 
@@ -728,7 +746,7 @@ double ContourMgr::insert_HB(const Interval inter, double h, double w, bool cm, 
             m_vVertical.pop_back();
         }
 
-        for(int c = 0; c < m_vVertical.size(); ++c){
+        for(int c = 0, size = m_vVertical.size(); c < size; ++c){
             Contour* t = new Contour;
             t->x = m_vVertical[c]->x;
             t->y = m_vVertical[c]->y;

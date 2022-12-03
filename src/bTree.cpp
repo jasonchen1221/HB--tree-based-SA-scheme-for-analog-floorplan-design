@@ -563,7 +563,10 @@ void BTree::treePack(Block* blk){
         m_height = blk->m_y + blk->m_height;
     }
 
+    //std::cout << "debug9: done here" << std::endl;
+
     if(left != nullptr){
+        //std::cout << "debug10: done here" << std::endl;
         left->m_x = blk->m_x + blk->m_width;
         inter.first = left->m_x;
         inter.second = left->m_x + left->m_width;
@@ -591,7 +594,25 @@ void BTree::treePack(Block* blk){
 }
 
 void BTree::packing(){
+    if(isEmpty()) return;
 
+    m_width = 0;
+    m_height = 0;
+    m_contourMgr.reset();
+    m_root->m_x = INIT;
+    m_contourMgr.setHeight(INIT, INT_MAX);
+    m_root->m_y = m_contourMgr.insert(
+        Interval(m_root->m_x, m_root->m_x + m_root->m_width),
+        m_root->m_height,
+        m_root->m_width
+    );
+
+    std::cout << "done insert" << std::endl;
+
+    treePack(m_root);
+    
+    assert(m_contourMgr.getMaxY() == m_height);
+    assert(m_contourMgr.getMaxX() == m_width);
 }
 
 void BTree::checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck){
