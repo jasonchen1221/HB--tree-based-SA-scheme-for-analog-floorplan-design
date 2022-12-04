@@ -105,8 +105,8 @@ void BTree::insertT(Block* blk){
 void BTree::insertRnd(Block* blk){
     /*
         1.  Insert one new blk
-        2.  If blk is isSelf : must add as ptr's right child
-            If blk is not isSelf : 50% add as left child ; 50% add as right child
+        2.  50% possibility put to right
+            50% possibility put to left
     */
     static bool LR = false; // true: left ; false: right
 

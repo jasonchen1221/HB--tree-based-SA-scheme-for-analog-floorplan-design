@@ -152,7 +152,6 @@ bool Placer::parseNetFile(std::string netFile, bool verbose){
         m_vNetList[i] = new Net;
     }
 
-    cout << "debug0" << endl;
     /* parse nets */
     for(int i = 0; i < numNets; ++i){
         
