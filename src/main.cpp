@@ -10,22 +10,11 @@ int main(int argc, char* argv[]){
     startTime = clock();
     
     Placer placer;
-    // alpha, blkFile, netFile, grpFile
-    //placer.parseAll(argv[1], argv[2], argv[3], argv[4]);    
-        /* testing parser */
-/*        placer.parseAlpha(argv[1], false);
-        placer.parseBlkFile(argv[2], false);
-        placer.parseNetFile(argv[3], false);
-        placer.parseGrpFile(argv[4], false);
-    
-    placer.setDevice();
-    
-    placer.constructHierarchicalModuleClusteringTree();
-    placer.place();
-*/  
+    // alpha, blkFile, netFile, outputFile
+    placer.parseAll(argv[1], argv[2], argv[3]);     
 
     // Testing BTree and Contourlines
-    BTree btree;
+/*     BTree btree;
 
     Block* blk_1 = new Block; blk_1->setName("b1"); blk_1->setW(5); blk_1->setH(3);
     Block* blk_2 = new Block; blk_2->setName("b2"); blk_2->setW(7); blk_2->setH(2);
@@ -80,6 +69,6 @@ int main(int argc, char* argv[]){
     cout << "b2: " << blk_2->getX() << "," << blk_2->getY() << endl; 
     cout << "b3: " << blk_3->getX() << "," << blk_3->getY() << endl; 
     cout << "b4: " << blk_4->getX() << "," << blk_4->getY() << endl; 
-
+*/
     return 0;
 }
