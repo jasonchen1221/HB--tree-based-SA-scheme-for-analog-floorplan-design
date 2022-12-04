@@ -15,23 +15,18 @@ public:
     /* member functions */ 
     void addBlk(Block* b);
     void addPin(Pin* p);
-    double getThisNetHPWL();
+    double getThisNetHPWL() const;
 
-    void setNetName(std::string s) { m_name = s; }
-    std::string getNetName() const { return m_name; }
+    //void setNetName(std::string s) { m_name = s; }
+    //std::string getNetName() const { return m_name; }
 
     /* info display & check */
     friend std::ostream& operator<<(std::ostream& os, const Net& net);
 
 private:
-    std::string m_name;
-    
+    //std::string m_name;
     std::vector<Block*> m_vBlks;
     std::vector<Pin*>   m_vPins;
-    double minX = std::numeric_limits<double>::max();
-    double maxX = std::numeric_limits<double>::lowest();
-    double minY = std::numeric_limits<double>::max();
-    double maxY = std::numeric_limits<double>::lowest();
 };
 
 #endif  //NET_HPP

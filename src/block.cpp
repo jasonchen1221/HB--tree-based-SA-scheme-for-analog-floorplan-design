@@ -2,17 +2,9 @@
 
 Block::Block(): 
     m_name("undefined_name"), m_x(0), m_y(0),
-    m_width(0), m_height(0), m_wDrawn(0), m_lDrawn(0),
-    m_nf(0), m_pLeft(nullptr), m_pRight(nullptr), 
-    m_pParent(nullptr), m_pChild(nullptr),
-    m_bodyPotential(""), m_isHierarchical(false),
-    m_isWellHiearchical(false), m_isSelf(false),
-    m_isContour(false) {
-    m_vModuleList.resize(0);
-    m_vHLContour.resize(0);
-    m_vVLContour.resize(0);
-    m_vBotContour.resize(0);
-}
+    m_width(0), m_height(0), m_pLeft(nullptr), 
+    m_pRight(nullptr), m_pParent(nullptr) 
+    { }
 
 /* member functions */ 
 void Block::laydown(){
@@ -26,14 +18,7 @@ void Block::standup(){
 }
         
 void Block::rotate(){
-    if(m_isSelf){
-        double tmp_w = m_width;
-        m_width = m_height / 2;
-        m_height = tmp_w * 2; 
-    }
-    else{
-        std::swap(m_width, m_height);
-    }
+    std::swap(m_width, m_height);
 }
 
 void Block::rotateXY(){
@@ -55,4 +40,13 @@ void Block::displayPLR() const{ // Parent, Left, Right
               << (m_pLeft == nullptr ? "nullptr" : m_pLeft->getName()) << ", "
               << "R: "
               << (m_pRight == nullptr ? "nullptr" : m_pRight->getName()) << std::endl;
-}             
+}
+
+size_t BlockV::operator () () const{
+    size_t k = 5000011;
+    int n = (m_name.length() > 4 ? 4 : m_name.length());
+    for(int i = 0; i < n; ++i)
+        k ^= ((size_t)m_name[i] << (i*8));
+    return k;
+}
+

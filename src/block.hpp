@@ -19,10 +19,7 @@ public:
     void setY(double y)         { m_y = y; }
     void setW(double w)         { m_width = w; }
     void setH(double h)         { m_height = h; }
-    void setWDrawn(double w)    { m_wDrawn = w; }
-    void setLDrawn(double l)    { m_lDrawn = l; }
-    void setNFin(int n)         { m_nf = n; }
-    void setSD(double sd)       { m_lde.SD = sd; }
+    
     void setParent(Block* b)    { m_pParent = b; }
     void setLeft(Block* b)      { m_pLeft = b; }
     void setRight(Block* b)     { m_pRight = b; }
@@ -32,10 +29,7 @@ public:
     double getY()         const { return m_y; }
     double getW()         const { return m_width; }
     double getH()         const { return m_height; }
-    double getWDrawn()    const { return m_wDrawn; }
-    double getLDrawn()    const { return m_lDrawn; }
-    int    getNFin()      const { return m_nf; }
-    double getSD()        const { return m_lde.SD; }
+
     double getArea()      const { return m_width * m_height; }
     Block* getParent()    const { return m_pParent; }
     Block* getLeft()      const { return m_pLeft; }
@@ -57,34 +51,43 @@ private:
     double               m_y;
     double               m_width;
     double               m_height;
-    double               m_wDrawn;
-    double               m_lDrawn;
-    int                  m_nf;
 
-    LDEParam             m_lde;
-    unsigned int         m_nPriority;
-
+    Block*               m_pParent;
     Block*               m_pLeft;
     Block*               m_pRight;
-    Block*               m_pParent;
-    Block*               m_pChild;
-
-    std::string          m_bodyPotential;
-
-    Constraint           m_constraint;
-
-    bool                 m_isHierarchical;      // 1: this block is Hierarchical node
-    bool                 m_isWellHiearchical;   // 1: this block is WellHiearchical node
-    bool                 m_isSelf;              // 1. this block is self symmetry node
-    bool                 m_isContour;           // 1: this block is contour node
-    
-    std::vector<Block*>   m_vModuleList;
-    std::vector<Block*>   m_vHLContour;     // Horizontal Contour Nodes
-    std::vector<Contour*> m_vVLContour;
-    std::vector<Contour*> m_vBotContour;
 };
 
 
+class BlockV {
+public:
+    BlockV(int n = 0, std::string str = ""): m_no(n), m_name(str) {}
+    ~BlockV() {}
+
+    std::string getName() const              { return m_name; }
+    int getNo () const                       { return m_no; }
+
+    bool operator == (const BlockV& n) const { return (m_name == n.getName()); }
+    size_t operator () () const;
+private:
+    int         m_no;
+    std::string m_name;   
+};
+
+
+class BlockR {
+   friend class Placer;
+
+public:
+   BlockR(int x = 0, int y = 0, int w = 0, int h = 0):
+            m_x(x), m_y(y), m_width(w), m_height(h) {}
+   ~BlockR() {}
+
+private:
+   int m_x;
+   int m_y;
+   int m_width;
+   int m_height;
+};
 
 
 #endif  //BLOCK_HPP

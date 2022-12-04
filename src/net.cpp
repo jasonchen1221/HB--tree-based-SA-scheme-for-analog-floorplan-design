@@ -12,19 +12,47 @@ void Net::addBlk(Block* b){
     
 void Net::addPin(Pin* p){
     m_vPins.push_back(p);
-
-    minX = std::min(minX, p->getX());
-    maxX = std::max(maxX, p->getX());
-    minY = std::min(minY, p->getY());
-    maxY = std::max(maxY, p->getY());
 }
 
-double Net::getThisNetHPWL() {    
+double Net::getThisNetHPWL() const{    
+    static double minX, maxX, minY, maxY;
+    static double tmp_x, tmp_y, tmp_w, tmp_h, mid_x, mid_y;   // temp
+
+    minX = std::numeric_limits<double>::max();
+    maxX = std::numeric_limits<double>::lowest();
+    minY = std::numeric_limits<double>::max();
+    maxY = std::numeric_limits<double>::lowest();
+    
+    for(int i = 0; i < m_vBlks.size(); ++i){
+        tmp_x = m_vBlks[i]->getX(); 
+        tmp_y = m_vBlks[i]->getY();
+        tmp_w = m_vBlks[i]->getW();
+        tmp_h = m_vBlks[i]->getH();
+        
+        mid_x = tmp_x + (tmp_w / 2);
+        mid_y = tmp_y + (tmp_h / 2);
+
+        if(mid_x > maxX) maxX = mid_x;
+        if(mid_x < minX) minX = mid_x;
+        if(mid_y > maxY) maxY = mid_y;
+        if(mid_y < minY) minY = mid_y;
+    }
+
+    for(int i = 0; i < m_vPins.size(); ++i){
+        tmp_x = m_vPins[i]->getX();
+        tmp_y = m_vPins[i]->getY();
+
+        if(tmp_x > maxX) maxX = tmp_x;
+        if(tmp_x < minX) minX = tmp_x;
+        if(tmp_y > maxY) maxY = tmp_y;
+        if(tmp_y < minY) minY = tmp_y;
+    }
+
     return ((maxX - minX) + (maxY - minY));
 }
 /* info display & check */
 std::ostream& operator<<(std::ostream& os, const Net& net){
-    std::cout << "This net's degree: " << net.m_vBlks.size() << std::endl;
+    std::cout << "This net's degree: " << net.m_vBlks.size() + net.m_vPins.size() << std::endl;
     // display connected blks
     std::cout << "connected blks:" << std::endl;
     for(int i = 0; i < net.m_vBlks.size(); ++i){

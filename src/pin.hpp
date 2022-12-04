@@ -30,5 +30,30 @@ private:
     double      m_y;
 };
 
+class PinV {
+public:
+   PinV(int n = 0, std::string str = ""): m_no(n), m_name(str) {}
+   ~PinV() {}
+
+   std::string getName() const            { return m_name; }
+   int getNo () const                     { return m_no; }
+
+   bool operator == (const PinV& n) const { return (m_name == n.getName()); }
+
+   size_t operator () () const
+   {
+      size_t k = 5000011;
+      int n = (m_name.length() > 4 ? 4 : m_name.length());
+      for(int i = 0; i < n; ++i)
+         k ^= ((size_t)m_name[i] << (i*8));
+      return k;
+   }
+   
+private:
+   int    m_no;
+   std::string m_name;
+};
+
+
 
 #endif  //PIN_HPP
