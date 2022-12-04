@@ -8,87 +8,84 @@
 #include "bTree.hpp"
 #include "recoverMsg.hpp"
 #include "contourline.hpp"
+#include "hashSet.hpp"
 
 #include <cstdlib>
 #include <set>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <float.h>
 
 class Placer{
 public:
     Placer(){
-        m_Temp = T_INIT;
-        m_P = P_INIT;
-        //m_Cost = 0.0;
-        m_LODCost = DBL_MAX_EXP;
-        //m_Anorm = m_Wnorm = 1.0;
-        m_deltaCost = 0;
-        //
-        //
-        //
-        //
-        //
-        //
+        m_T             = T_INIT;
+        m_P             = P_INIT;
+        m_Cost          = 0.0;
+        m_Anorm         = 1.0;
+        m_Wnorm         = 1.0;
+        m_delta         = 0;
+        m_Width         = INT_MAX;
+        m_Height        = INT_MAX;
+        m_WireLen       = 2;
+        m_BTree         = nullptr;
+        m_recoverMsg    = new RecoverMsg;
+        srand((unsigned)time(NULL));
+        m_minCost       = INT_MAX;
     }
     ~Placer(){
-        clearLists();
+        clear();
     } 
 
 /* Parsers */
-    void parseAll(std::string alpha, std::string blkFile, std::string netFile, std::string grpFile);
-    bool parseAlpha(std::string alpha, bool verbose);
-    bool parseBlkFile(std::string blkFile, bool verbose);
-    bool parseNetFile(std::string netFile, bool verbose);
-    bool parseGrpFile(std::string grpFile, bool verbose);
-/* Device settings (LOD Minimization) */
-    void setDevice();
-    void minimizeLOD(bool verbose);
-    void insertDummy();
-    void determineSize();
-    void showInfo(bool verbose, std::string flag);
-
-    double m_LAnorm;
-    double mobRelChangeFunc_PMOS(double SA, double NF, double FW, double SD, double LDrawn);
-    double mobRelChangeFunc_NMOS(double SA, double NF, double FW, double SD, double LDrawn);
-    double getLODCost(double FW, double NFIN, double mobRelChan, double mobRelChanRef, double SD, double LDrawn);
-    double m_LODCost;
-    double m_avgMobWPE;
-
-/* SA */
-    double updateT(int iter);
-    double m_deltaCost;
-    double m_P;
-    double m_C;
-    double m_Temp;
-    double m_Temp1;
-    double m_deltaCostCnt;
-    double m_deltaSum;
-    double m_K;
-    double m_L;
-    double m_N;
-    double m_I; // # of iter upper bound
-
-/* Pre works of Placer */
-    void constructHierarchicalModuleClusteringTree();
-    void setSymmetryChild();
-    void mergeSymmetryConstraint();
-    void setWellIsland();
-    double interWellPlaceModules(Block* blk);
+    void    parseAll(std::string alpha, std::string blkFile, std::string netFile);
+    bool    parseAlpha(std::string alpha, bool verbose);
+    bool    parseBlkFile(std::string blkFile, bool verbose);
+    bool    parseNetFile(std::string netFile, bool verbose);
 
 /* Placer */
-    void place();
-    void initialPlace(std::string, Block* blk);
+    void    place();
+    void    initPerturb();
+    bool    isTimeout(const time_t&) const;
+    void    initSol();
+    void    recover();
+    void    genNeighbor();
+    void    updateCost(); // update _Anorm, _Wnorm, and _Cost
+    bool    shinbwei() const; 
+    void    rotateAll();
+    void    record();
+    void    writeRecord();
+    PerturbType rndSelectType() const;
+    double  T(int);
 
-    std::vector<Block*> m_saBlockList;
-    std::vector<Block*> m_saSymList;
-    std::vector<Block*> m_saNewBlockList;
-    std::unordered_map<std::string, Block*> m_saBlockHash;
-    
-/* Helper */
-    void clearLists();
-    void clearSAList();
-    bool isTimeout(const time_t& start) const;
+/* Perturbation Modes: Generate Neighbor */ 
+    void    genLeftRotate();
+    void    genRightRotate();
+    void    genDeleteInsert();
+    void    genSwapTwoBlocks();
+    void    genRotateBlock();
+
+/* Result */ 
+    bool    writeResult(std::string);
+    void    result(ostream&);
+    void    resultGUI(ostream&);
+    void    resultGnuplot();
+    double  getCost() const;
+    double  getFinalCost() const;
+    double  getArea() const          { return (m_Width * m_Height); }
+    double  getOutlineArea() const   { return (m_outlineW * m_outlineH); }
+    double  getTTLWireLen() const;
+    double  getWidth() const         { return m_Width; }
+    double  getHeight() const        { return m_Height; }
+
+/* Debugging msg */
+    void    printBlockList() const;
+    void    printPinList() const;
+    void    printNetList() const;
+    void    printRnd() const;
+
+    void    clear();
 
 private:
 /* alpha */
@@ -98,36 +95,60 @@ private:
     double m_outlineH;
 /* Block */
     std::vector<Block*> m_vBlockList;
-    //HashSet<BlockV> m_BlockHash;
-    std::unordered_map<std::string, Block*> m_BlockHash;
-    std::vector<Block*> m_mainBlockList;
+    HashSet<BlockV> m_blockHashSet;
+    
 /* Net */
     std::vector<Net*> m_vNetList;
 /* Pin */
     std::vector<Pin*> m_vPinList;
-    //HashSet<PinV> m_PinHash;
-    std::unordered_map<std::string, Pin*> m_PinHash;
-/* Constraints */
-    std::vector<std::vector<Block*>> m_vConstraints;
-
-/* Level */
-    std::set<int> m_level;
-    std::map<std::string, std::vector<std::string>> m_levelMap; //SELF 
-    std::map<std::string, std::vector<std::pair<std::string,std::string>>> m_levelMapPair;  //SYMMETRY
+    HashSet<PinV> m_PinHashSet;
 
 /* B-tree */
     BTree*                        m_BTree;
-    BTree*                        m_HBTree;
     RecoverMsg*                   m_recoverMsg;
-    std::map<std::string, BTree*> m_BStar;
 
 /* */
-    double m_ttlArea;
+    double             m_Cost;
+    double             m_Anorm;
+    double             m_Wnorm;
+    double             m_delta;
+    double             m_P;
+    double             m_C;
+    double             m_T;
+    double             m_T1;
+
+    double             m_k;
+    double             m_L; 
+    double             m_N;
+    double             m_I; // #iter upper bound
+    double             m_Width;
+    double             m_Height;
+    double             m_WireLen;
+
+    double             m_w;
+    double             m_x;
+    double             m_y;
+    double             m_z;
+
+    double             m_uphill_avg_cnt;
+    double             m_uphill_sum;
+    double             m_delta_cost_cnt;
+    double             m_delta_sum;
+
+    double             m_minCost;
+    double             m_totalArea;
+    vector<BlockR>     m_optSol;
 
 
 /* Help Functions */
-    void splitString(std::string str, std::vector<std::string>& vec);
-    void calTtlArea();
+    void    splitString(std::string str, std::vector<std::string>& vec);
+    bool    isFloat(string s);
+    double  getTime(const time_t& start) const;
+    double  getRnd() const;
+    size_t  getHashSize(size_t s) const;
+    bool    isFitin() const     { return (m_Width <= m_outlineW && m_Height <= m_outlineH); }
+    bool    isInvFit() const;
+    void    calTTLArea();
 };
 
 

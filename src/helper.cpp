@@ -1,5 +1,7 @@
 #include "placer.hpp"
 
+using std::cout; using std::endl;
+
 void Placer::splitString(std::string str, std::vector<std::string>& vec){
     std::vector<std::string> words;
     int tmp = 0, i = 0, width = 0;
@@ -21,11 +23,10 @@ void Placer::splitString(std::string str, std::vector<std::string>& vec){
     vec = words;
 }
 
-void Placer::calTtlArea(){
-    m_ttlArea = 0;
-    for(int i = 0; i < m_vBlockList.size(); ++i){
-        m_ttlArea += m_vBlockList[i]->getArea();
-    }
+double Placer::getTime(const time_t& start) const{
+    time_t end = clock();
+    double t_used = (double)(end - start) / CLOCKS_PER_SEC;
+    return t_used;
 }
 
 bool Placer::isTimeout(const time_t& start) const{
@@ -41,51 +42,85 @@ bool Placer::isTimeout(const time_t& start) const{
     }
 }
 
-
-void Placer::clearLists(){
-    for(int  i = 0; i < m_mainBlockList.size(); ++i){
-        delete m_mainBlockList[i];
-    }      
-
-    m_vBlockList.clear();    
-    m_vPinList.clear();
-    m_vNetList.clear();
-       
-       /*
-       for(map<string, Btree*>::const_iterator it = _bstar.begin();
-       it != _bstar.end(); ++it)
-          delete it->second;
-       _bstar.clear();
-        */
-    m_mainBlockList.clear();
-    
-
-    /*
-     if(_hbtree)delete _hbtree;
-     if(_recoverMsg) delete _recoverMsg;
-    */
+void Placer::printBlockList() const{
+    cout << "BlockList size: " << m_vBlockList.size() << endl;
+    for(int i = 0; i < m_vBlockList.size(); ++i){
+        cout << *m_vBlockList[i] << endl;
+    }
 }
 
-void Placer::clearSAList(){
-    for(int i = 0; i < m_saBlockList.size(); ++i){
-        m_saBlockList[i] = 0;
+void Placer::printPinList() const{
+    cout << "PinList size: " << m_vPinList.size() << endl;
+    for(int i = 0; i < m_vPinList.size(); ++i){
+        cout << *m_vPinList[i] << endl;
     }
-    for(int i = 0; i < m_saSymList.size(); ++i){
-        m_saSymList[i] = 0;
+}
+
+void Placer::printNetList() const{
+    cout << "NetList size: " << m_vNetList.size() << endl;
+    for(int i = 0; i < m_vNetList.size(); ++i){
+        cout << "[" << i << "]" << endl;
+        cout << *m_vNetList[i] << endl;
+    }
+}
+
+void Placer::printRnd() const{
+    int a = 0, b = 0, c = 0, d = 0;
+    for(int i = 0; i < 10000000; ++i){
+        double k = getRnd();
+        if(k < 0.25)        a++;
+        else if(k < 0.5)    b++;
+        else if(k < 0.75)   c++;
+        else                d++;
+    }
+    cout << a << " " << b << " " << c << " " << d << endl;
+ }
+
+void Placer::clear(){
+    for(int i = 0, size = m_vBlockList.size(); i < size; ++i){
+        delete m_vBlockList[i];
     }
 
-    if(!m_saBlockHash.empty()){
-        for(auto iter = m_saBlockHash.begin(); iter != m_saBlockHash.end(); ++iter){
-            delete iter->second;
-        }
-    }
-    m_saBlockHash.clear();
-
-    for(int i = 0; i < m_saNewBlockList.size(); ++i){
-        delete m_saNewBlockList[i];
+    for(int i = 0, size = m_vPinList.size(); i < size; ++i){
+        delete m_vPinList[i];
     }
 
-    m_saSymList.clear();
-    m_saBlockList.clear();
-    m_saNewBlockList.clear();
+    for(int i = 0, size = m_vNetList.size(); i < size; ++i){
+        delete m_vNetList[i];
+    }
+
+    if(m_BTree != nullptr) delete m_BTree;
+    if(m_recoverMsg != nullptr) delete m_recoverMsg;
+}
+
+double  Placer::getRnd() const{
+    // only return 0.0000... ~ 0.9999...
+    return ((double)(rand() % RANDOM_RANGE) / RANDOM_RANGE);
+}
+
+void Placer::calTTLArea(){
+    m_totalArea = 0;
+    for(int i = 0; i < m_vBlockList.size(); ++i){
+        m_totalArea += m_vBlockList[i]->getArea();
+    }
+}
+
+size_t Placer::getHashSize(size_t s) const{
+    if (s < 8) return 7;
+    if (s < 16) return 13;
+    if (s < 32) return 31;
+    if (s < 64) return 61;
+    if (s < 128) return 127;
+    if (s < 512) return 509;
+    if (s < 2048) return 1499;
+    if (s < 8192) return 4999;
+    if (s < 32768) return 13999;
+    if (s < 131072) return 59999;
+    if (s < 524288) return 100019;
+    if (s < 2097152) return 300007;
+    if (s < 8388608) return 900001;
+    if (s < 33554432) return 1000003;
+    if (s < 134217728) return 3000017;
+    if (s < 536870912) return 5000011;
+    return 7000003;
 }
