@@ -8,25 +8,25 @@
 const double T_INIT             = 100000.0;
 const double T_FROZEN           = 0.000001;
 const double P_INIT             = 0.987;
-const double L_INIT             = 0.0;
+const double L_INIT             = 200.0;
 const double N_INIT             = 0.0;
 const double K_INIT             = 7;
 const double C_INIT             = 100;
-const int    ITER_LIMIT         = 0;
+const int    ITER_LIMIT         = 1000;
 
-const double W_INIT             = 0.0;
-const double X_INIT             = 0.0;
+const double W_INIT             = 0.5;
+const double X_INIT             = 0.5;
 const double Y_INIT             = 0.0;
 const double Z_INIT             = 0.0;
 
 /*  */
 const double TIME_LIMIT         = 3000.0;
-const int    RANDOM_RANGE       = 0;
-const int    NULL_SIZE          = 0;
+const int    RANDOM_RANGE       = 100000;
+const int    NULL_SIZE          = 33;
 
-const int    INIT_PURTURB_NUM   = 1000;  //prob. size
-const int    INIT               = 50;
-const double RING_SPACING       = 0.0;
+const int    INIT_PURTURB_NUM   = 100;  //prob. size
+//const int    INIT               = 50;
+//const double RING_SPACING       = 0.0;
 
 /* Stress Parameters */
 const double SA                 = 0.1750;   // left diffusion length
@@ -90,16 +90,17 @@ enum E_DeviceType {UNKNOWN_TYPE, NMOS, PMOS, RESISTOR, CAPACITOR};
 class Placer;
 
 class Block;
-//class BlockV;
+class BlockV;
+class BlockR;
 class Pin;
-//class PinV;
+class PinV;
 class Net;
 
 class BTree;
 class RecoverMsg;
 
-class ContourLine;
 class ContourMgr;
+class ContourLine;
 typedef std::pair<double, double> Interval;
 typedef std::pair<double, double> Interval_v;
 
@@ -139,25 +140,26 @@ struct Contour{
 };
 
 /* Perturbation Modes */
-enum PertubType{
+enum PerturbType{
     LEFT_ROTATE                 = 0,
     RIGHT_ROTATE                = 1,
-    SWAP_TWO_BLOCKS             = 2,
-    ROTATE_BLOCK                = 3,
-    REP_CHANGE                  = 4,
-    LEFT_ROTATE_HB              = 5,
-    RIGHT_ROTATE_HB             = 6,
-    SWAP_TWO_BLOCKS_HB          = 7,
+    DELETE_INSERT               = 2,
+    SWAP_TWO_BLOCKS             = 3,
+    ROTATE_BLOCK                = 4,
+    // dummy end
+    OPT_TOT                     = 5
+    
+    //REP_CHANGE                  = 4,
+    //LEFT_ROTATE_HB              = 5,
+    //RIGHT_ROTATE_HB             = 6,
+    //SWAP_TWO_BLOCKS_HB          = 7,
 //  ROTATE_BLOCK_HB             = 8,
-    ASF_OP_HB                   = 8,
-    ROTATE_BLOCK_HB             = 9,
-    SWAP_TWO_HIERARCHY_BLOCKS   = 10,
-    LEFT_ROTATE_HIERARCHY       = 11,
-    RIGHT_ROTATE_HIERARCHY      = 12,
-
-    OPT_TOT                     = 13
+    //ASF_OP_HB                   = 8,
+    //ROTATE_BLOCK_HB             = 9,
+    //SWAP_TWO_HIERARCHY_BLOCKS   = 10,
+    //LEFT_ROTATE_HIERARCHY       = 11,
+    //RIGHT_ROTATE_HIERARCHY      = 12,
+    
 };
-
-
 
 #endif  //GLOBALPARAM_HPP
