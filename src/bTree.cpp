@@ -102,7 +102,7 @@ void BTree::insertT(Block* blk){
     assert(m_size > 0);
 }  
 
-void BTree::insertRnd(Block* blk, bool isSelf){
+void BTree::insertRnd(Block* blk){
     /*
         1.  Insert one new blk
         2.  If blk is isSelf : must add as ptr's right child
@@ -110,7 +110,7 @@ void BTree::insertRnd(Block* blk, bool isSelf){
     */
     static bool LR = false; // true: left ; false: right
 
-    if(isEmpty() || (isSelf && isEmpty())){
+    if(isEmpty()){
         m_root = blk;
         m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
         blk->m_pParent = m_dummyNode;
@@ -121,11 +121,11 @@ void BTree::insertRnd(Block* blk, bool isSelf){
 
         while(ptr != nullptr){
             pos = ptr;
-            if(rand() % 2 || isSelf){   // is self must put to right , or 50% possibility put to right
+            if(rand() % 2){   // 50% possibility put to right
                 ptr = ptr->m_pRight;                
                 LR = false;
             }
-            else{   // 50% possibility put to right
+            else{   // 50% possibility put to left
                 ptr = ptr->m_pLeft;
                 LR = true;
             }
@@ -142,132 +142,6 @@ void BTree::insertRnd(Block* blk, bool isSelf){
     }
 
     m_size++;
-
-    assert(m_size > 0);
-}
-
-void BTree::insertRnd_Hierarchy(Block* blk, bool isSelf){
-    /*
-        1.  add a new blk into Hierarchy
-        2.  If new blk is isSelf -> must move right
-            If ptr is contour node -> must move right
-            else : 50% move left, 50% move right
-        3.  If blk is hierarchical node -> set contour nodes on blk's right child
-    */
-    static bool LR = false;     // true: left ; flase: right
-    bool SYM = false;
-
-    if((isEmpty() || (isSelf && isEmpty())) && (blk->m_isContour == false)){
-        m_root = blk;
-        m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
-        blk->m_pParent = m_dummyNode;
-
-        if(blk->m_isHierarchical) SYM = true;
-        else                      SYM = false;
-    }
-    else{
-        Block* ptr = m_root;
-        Block* pos = ptr;
-
-        while(ptr != nullptr){
-            pos = ptr;
-            if(rand() % 2 || isSelf || ptr->m_isContour){
-                ptr = ptr->m_pRight;
-                LR = false;
-            }
-            else{
-                ptr = ptr->m_pLeft;
-                LR = true;
-            }
-        }
-
-        if(LR == true){
-            pos->m_pLeft = blk;
-            if(blk->m_isHierarchical) SYM = true;
-            else                      SYM = false;
-        }
-        else{   // LR == false
-            pos->m_pRight = blk;
-            if(blk->m_isHierarchical) SYM = true;
-            else                      SYM = false;
-        }
-
-        blk->m_pParent = pos;
-    }
-
-    ++m_size;
-
-    if(SYM == true){    // blk is Hierarchical
-        blk->m_pRight = blk->m_vHLContour[0];
-        blk->m_vHLContour[0]->m_pParent = blk;
-        ++m_size;
-    }
-
-    assert(m_size > 0);
-}
-
-void BTree::insertRnd_HB(Block* blk){
-    /*
-        1.  blk: 50% move to left, 50% move to right
-            but, if ptr point to contour node : must move to right
-        2.  if blk is hierarchical node -> add contour nodes on ptr's right child
-    */
-    static bool LR = false;     // true: left ; false: right
-    bool SYM = false;
-
-    if(isEmpty() && (blk->m_isContour == false)){
-        m_root = blk;
-        m_dummyNode->m_pLeft = m_dummyNode->m_pRight = m_root;
-        blk->m_pParent = m_dummyNode;
-        
-        if(blk->m_isHierarchical == true) SYM = true;
-        else                              SYM = false;
-    }
-    else{
-        Block* ptr = m_root;
-        Block* pos = ptr;
-
-        while(ptr != nullptr){
-            pos = ptr;
-            if(rand() % 2 && (ptr->m_isContour == false)){
-                ptr = ptr->m_pLeft;
-                LR = true;
-            }
-            else{
-                ptr = ptr->m_pRight;
-                LR = false;
-            }
-        }
-
-        if(LR == true){
-            pos->m_pLeft = blk;
-            if(blk->m_isHierarchical == true) SYM = true;
-            else                              SYM = false;  
-        }
-        else{   // LR == false
-            pos->m_pRight = blk;
-            if(blk->m_isHierarchical == true) SYM = true;
-            else                              SYM = false;
-        }
-        blk->m_pParent = pos;
-    }
-
-    ++m_size;
-
-    if(SYM == true){
-        for(int i = 0; i < blk->m_vHLContour.size(); ++i){
-            if(i == 0){
-                blk->m_pRight = blk->m_vHLContour[i];
-                blk->m_vHLContour[i]->m_pParent = blk;
-                ++m_size;
-            }
-            else{
-                blk->m_vHLContour[i-1]->m_pLeft = blk->m_vHLContour[i];
-                blk->m_vHLContour[i]->m_pParent = blk->m_vHLContour[i-1];
-                ++m_size;
-            }
-        }
-    }
 
     assert(m_size > 0);
 }
@@ -394,7 +268,7 @@ void BTree::reset(){
         clear the binary tree
     */
     m_root = m_dummyNode;
-    m_dummyNode = m_dummyNode = nullptr;
+    m_dummyNode->m_pLeft = m_dummyNode->m_pRight = nullptr;
     m_size = 0;
 }
 
@@ -410,11 +284,7 @@ Block* BTree::treeMin(Block* ptr) const{
 Block* BTree::treeMax(Block* ptr) const{
     assert(ptr != nullptr);
 
-    std::cout << "function treeMax" << std::endl;
-    std::cout << ptr->m_name << std::endl;
-
     while(ptr->m_pRight != nullptr){
-        std::cout << ptr->m_pRight->m_name << std::endl;
         ptr = ptr->m_pRight;
     }
     return ptr;
@@ -479,8 +349,7 @@ void BTree::compactX(Block* blk, bool isFirst){
         m_root->m_y = 0;
         m_contourMgr.insert(
             Interval(m_root->m_y, m_root->m_y + m_root->m_height),
-            m_root->m_width,
-            m_root->m_height
+            m_root->m_width
         );
     }
 
@@ -497,21 +366,13 @@ void BTree::compactX(Block* blk, bool isFirst){
     if(right != nullptr){
         inter.first = right->m_y;
         inter.second = right->m_y + right->m_height;
-        right->m_x = m_contourMgr.insert(
-            inter,
-            right->m_width,
-            right->m_height
-        );
+        right->m_x = m_contourMgr.insert(inter, right->m_width);
         compactX(right, false);
     }
     if(left != nullptr){
         inter.first = left->m_y;
         inter.second = left->m_y + left->m_height;
-        left->m_x = m_contourMgr.insert(
-            inter,
-            left->m_width,
-            left->m_height
-        );
+        left->m_x = m_contourMgr.insert(inter, left->m_width);
         compactX(left, false);
     }
 
@@ -528,22 +389,14 @@ void BTree::compactY(Block* blk){
     if(left != nullptr){
         inter.first = left->m_x;
         inter.second = left->m_x + left->m_width;
-        left->m_y = m_contourMgr.insert(
-            inter,
-            left->m_height,
-            left->m_width
-        );
+        left->m_y = m_contourMgr.insert(inter, left->m_height);
         compactY(left);
     }
 
     if(right != nullptr){
         inter.first = right->m_x;
         inter.second = right->m_x + right->m_width;
-        right->m_y = m_contourMgr.insert(
-            inter,
-            right->m_height,
-            right->m_width
-        );
+        right->m_y = m_contourMgr.insert(inter, right->m_height);
         compactY(right);
     }
 
@@ -570,11 +423,7 @@ void BTree::treePack(Block* blk){
         left->m_x = blk->m_x + blk->m_width;
         inter.first = left->m_x;
         inter.second = left->m_x + left->m_width;
-        left->m_y = m_contourMgr.insert(
-            inter,
-            left->m_height, 
-            left->m_width
-        );
+        left->m_y = m_contourMgr.insert(inter, left->m_height);
         treePack(left);
     }
 
@@ -582,11 +431,7 @@ void BTree::treePack(Block* blk){
         right->m_x = blk->m_x;
         inter.first = right->m_x;
         inter.second = right->m_x + right->m_width;
-        right->m_y = m_contourMgr.insert(
-            inter,
-            right->m_height,
-            right->m_width
-        );
+        right->m_y = m_contourMgr.insert(inter, right->m_height);
         treePack(right);
     }
 
@@ -599,44 +444,17 @@ void BTree::packing(){
     m_width = 0;
     m_height = 0;
     m_contourMgr.reset();
-    m_root->m_x = INIT;
-    m_contourMgr.setHeight(INIT, INT_MAX);
-    m_root->m_y = m_contourMgr.insert(
-        Interval(m_root->m_x, m_root->m_x + m_root->m_width),
-        m_root->m_height,
-        m_root->m_width
-    );
+    m_root->m_x = 0;
+    m_root->m_y = 0;
 
-    std::cout << "done insert" << std::endl;
+    m_contourMgr.insert(
+        Interval(m_root->m_x, m_root->m_x + m_root->m_width),
+        m_root->m_height
+    );
 
     treePack(m_root);
     
     assert(m_contourMgr.getMaxY() == m_height);
-    assert(m_contourMgr.getMaxX() == m_width);
-}
-
-void BTree::checkSym(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck){
-
-}
-
-void BTree::checkSym_Hierarchy(Block* blk, bool compre, bool check, bool HI, bool VI, bool pairCheck){
-
-}
-
-void BTree::treePack_HB(Block* blk){
-
-}
-
-void BTree::packing_HB(){
-
-}
-
-void BTree::treePack_Hierarchy(Block* blk){
-
-}
-
-void BTree::packing_Hierarchy(){
-
 }
 
 
@@ -772,30 +590,6 @@ void BTree::connectSwap(Block* parent, Block* child){
 }
 
 void BTree::sameParentSwap(Block* blkA, Block* blkB){
-
-}
-
-void BTree::swapBlk_Hierarchy(Block* blkA, Block* blkB){
-
-}
-
-void BTree::generalSwap_Hierarchy(Block* blkA, Block* blkB){
-
-}
-
-void BTree::rightConnectSwap_Hierarchy(Block* blkA, Block* blkB){
-
-}
-
-void BTree::leftConnectSwap_Hierarchy(Block* blkA, Block* blkB){
-
-}
-
-void BTree::sameParentSwap_Hierarchy(Block* blkA, Block* blkB){
-
-}
-
-Block* BTree::repChange(Block* blkA, Block* blkB){
 
 }
 
