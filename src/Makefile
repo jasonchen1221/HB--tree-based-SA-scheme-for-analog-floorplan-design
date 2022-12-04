@@ -4,7 +4,8 @@ EXE = Place.exe
 CFLAGS = -g -Wall -O3
 
 OBJS = main.o block.o net.o parser.o \
-	   placer.o helper.o bTree.o contourline.o
+	   placer.o helper.o bTree.o contourline.o \
+	   dumper.o
 
 HEADERS = placer.hpp globalParam.hpp block.hpp \
           net.hpp pin.hpp parser.hpp recoverMsg.hpp \
