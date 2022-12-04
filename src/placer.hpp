@@ -57,7 +57,7 @@ public:
     void    record();
     void    writeRecord();
     PerturbType rndSelectType() const;
-    double  T(int);
+    double  T(int iter);
 
 /* Perturbation Modes: Generate Neighbor */ 
     void    genLeftRotate();
@@ -66,11 +66,11 @@ public:
     void    genSwapTwoBlocks();
     void    genRotateBlock();
 
-/* Result */ 
-    bool    writeResult(std::string);
+/* Result(Dumper) */ 
+    void    writeResult(std::string);
     void    result(ostream&);
-    void    resultGUI(ostream&);
-    void    resultGnuplot();
+    //void    resultGUI(ostream&);
+    //void    resultGnuplot();
     double  getCost() const;
     double  getFinalCost() const;
     double  getArea() const          { return (m_Width * m_Height); }
@@ -86,6 +86,8 @@ public:
     void    printRnd() const;
 
     void    clear();
+
+    BTree*  getBTree() { return m_BTree; }
 
 private:
 /* alpha */
