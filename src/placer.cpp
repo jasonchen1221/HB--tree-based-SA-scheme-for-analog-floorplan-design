@@ -8,7 +8,7 @@ using std::endl;
 extern time_t startTime;
 
 /* ---------------------------------Placer--------------------------------- */
-/*void Placer::place(){
+void Placer::place(){
     cout << "Start Place..." << endl;
 
     int iter = 0;
@@ -19,8 +19,8 @@ extern time_t startTime;
         initSol();
         int rejectNum = 0;
         ++numProcess;
-        iter = 0;
-        m_N = 0;
+        iter = 0;   // # of iteration  
+        m_N = 0;    // # of iteration
         
         while(m_T > T_FROZEN) {
             ++numTry;
@@ -42,7 +42,7 @@ extern time_t startTime;
                     record();
                 }
                 else{   // move worse
-                    if(shinbwei() == true){ //accept with prob.
+                    if(acceptOrNot() == true){ //accept with prob.
                         updateCost();
                         record();
                     }
@@ -73,7 +73,7 @@ extern time_t startTime;
     cout << "  - Final Cost    = " << getFinalCost() << endl;
 
     cout << "Start Place[FINISHED]" << endl;
-}*/
+}
 
 void Placer::initSol(){
     if(!(rand() % 6)){  // with prob. 5/6
@@ -220,6 +220,114 @@ PerturbType Placer::rndSelectType() const{
     cerr << "Function: rndSelectType(): Something Wrong..." << endl;
     assert(false);
     return OPT_TOT;
+}
+
+void Placer::updateCost(){
+    // update _Anorm, _Wnorm, and _Cost
+    m_Cost = getCost();
+} 
+
+void Placer::record(){
+    if(isFitin()){
+        if(getFinalCost() < m_minCost){
+            m_minCost = getFinalCost();
+            
+            m_optSol.resize(0);
+            for(int i = 0; i < m_vBlockList.size(); ++i){
+                double x = m_vBlockList[i]->getX();
+                double y = m_vBlockList[i]->getY();
+                double w = m_vBlockList[i]->getW();
+                double h = m_vBlockList[i]->getH();
+                m_optSol.push_back(BlockResult(x, y, w, h));
+            }
+        }
+    }
+    else if(isInvFit()){
+        rotateAll();
+        if(getFinalCost() < m_minCost){
+            m_minCost = getFinalCost();
+            
+            m_optSol.resize(0);
+            for(int i = 0; i < m_vBlockList.size(); ++i){
+                double x = m_vBlockList[i]->getX();
+                double y = m_vBlockList[i]->getY();
+                double w = m_vBlockList[i]->getW();
+                double h = m_vBlockList[i]->getH();
+                m_optSol.push_back(BlockResult(x, y, w, h));
+            }
+        }
+        rotateAll();
+    }
+    else{   // not fit-in or not fit-in-reversly: just return (no record) 
+        return;
+    }
+
+}
+
+double Placer::getRnd() const {
+    // only return 0.000... ~ 0.999...
+    return ((double)(rand() % RANDOM_RANGE) / RANDOM_RANGE);
+}
+
+bool Placer::acceptOrNot() const{
+    assert(m_T > 0);
+    return ( getRnd() <= exp(-((double)m_delta)/(m_T)) );
+} 
+
+void Placer::recover(){
+    switch (m_recoverMsg->getType()) {
+        case LEFT_ROTATE:
+            if(m_recoverMsg->getithBlk(0) != nullptr){
+                m_BTree->rightRotateB(m_recoverMsg->getithBlk(0));
+            }
+            break;
+        
+        case RIGHT_ROTATE:
+            if(m_recoverMsg->getithBlk(0) != nullptr){
+                m_BTree->leftRotateB(m_recoverMsg->getithBlk(0));
+            }
+            break;
+
+        case DELETE_INSERT:
+            m_BTree->swapBlk(m_recoverMsg->getithBlk(0), m_recoverMsg->getithBlk(1));
+            break;
+
+        case SWAP_TWO_BLOCKS:
+            m_BTree->swapBlk(m_recoverMsg->getithBlk(0), m_recoverMsg->getithBlk(1));
+            break;
+
+        case ROTATE_BLOCK:
+            m_recoverMsg->getithBlk(0)->rotate();
+            break;
+        
+        default:
+            assert(false);
+            break;
+    }
+    
+    m_BTree->packing();
+    // update width and height after packing
+    m_Width  = m_BTree->getWidth();
+    m_Height = m_BTree->getHeight();
+}
+
+double Placer::T(int iter){
+    if(iter <= m_k){
+        double newTemp = (m_T1 * abs(m_delta_sum / m_delta_cost_cnt) / m_N / m_C);
+        return newTemp;
+    }
+    else if(iter > m_k){
+        double newTemp = (m_T1 * abs(m_delta_sum / m_delta_cost_cnt) / m_N);
+    }
+    else{
+        assert(false);
+    }
+}
+
+void Placer::rotateAll(){
+    for(int i = 0; i < m_vBlockList.size(); ++i){
+        m_vBlockList[i]->rotateXY();
+    }
 }
 
 /* ---------------------------------Perturbation Modes: Generate Neighbor--------------------------------- */ 

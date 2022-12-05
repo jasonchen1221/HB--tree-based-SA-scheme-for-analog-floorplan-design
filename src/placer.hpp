@@ -46,20 +46,20 @@ public:
     bool    parseNetFile(std::string netFile, bool verbose);
 
 /* Placer */
-    void    place();
-    bool    isTimeout(const time_t&) const;
-    void    initSol();
-    void    initPerturb();
-    void    genNeighbor();
-    void    recover();
-    void    updateCost(); // update _Anorm, _Wnorm, and _Cost
-    bool    shinbwei() const; 
-    void    rotateAll();
-    void    record();
-    void    writeRecord();
+    void        place();
+    bool        isTimeout(const time_t&) const;
+    void        initSol();
+    void        initPerturb();
+    void        genNeighbor();
     PerturbType rndSelectType() const;
-    double  T(int iter);
-
+    void        updateCost(); // update _Anorm, _Wnorm, and _Cost
+    void        record();
+    bool        acceptOrNot() const; 
+    void        recover();
+    double      T(int iter);
+    void        writeRecord();
+    void        rotateAll();
+    
 /* Perturbation Modes: Generate Neighbor */ 
     void    genLeftRotate();
     void    genRightRotate();
@@ -111,36 +111,36 @@ private:
     RecoverMsg*                   m_recoverMsg;
 
 /* */
-    double             m_Cost;
-    double             m_Anorm;
-    double             m_Wnorm;
-    double             m_delta;
-    double             m_P;
-    double             m_C;
-    double             m_T;
-    double             m_T1;
+    double              m_Cost;
+    double              m_Anorm;
+    double              m_Wnorm;
+    double              m_delta;
+    double              m_P;
+    double              m_C;
+    double              m_T;
+    double              m_T1;
 
-    double             m_k;
-    double             m_L; 
-    double             m_N;
-    double             m_I;     // #iter upper bound
-    double             m_Width;
-    double             m_Height;
-    double             m_WireLen;
+    double              m_k;
+    double              m_L; 
+    double              m_N;
+    double              m_I;     // #iter upper bound
+    double              m_Width;
+    double              m_Height;
+    double              m_WireLen;
 
-    double             m_w;
-    double             m_x;
-    double             m_y;
-    double             m_z;
+    double              m_w;
+    double              m_x;
+    double              m_y;
+    double              m_z;
 
-    double             m_uphill_avg_cnt;
-    double             m_uphill_sum;
-    double             m_delta_cost_cnt;
-    double             m_delta_sum;
+    double              m_uphill_avg_cnt;
+    double              m_uphill_sum;
+    double              m_delta_cost_cnt;
+    double              m_delta_sum;
 
-    double             m_minCost;
-    double             m_totalArea;
-    vector<BlockR>     m_optSol;
+    double              m_minCost;
+    double              m_totalArea;
+    vector<BlockResult> m_optSol;
 
 
 /* Help Functions */
@@ -149,8 +149,8 @@ private:
     double  getTime(const time_t& start) const;
     double  getRnd() const;
     size_t  getHashSize(size_t s) const;
-    bool    isFitin() const     { return (m_Width <= m_outlineW && m_Height <= m_outlineH); }
-    bool    isInvFit() const;
+    bool    isFitin() const  { return ((m_Width <= m_outlineW) && (m_Height <= m_outlineH)); }
+    bool    isInvFit() const { return ((m_Width <= m_outlineH) && (m_Height <= m_outlineW)); }   
     void    calTTLArea();
 };
 
