@@ -4,6 +4,7 @@
 #include "globalParam.hpp"
 #include "block.hpp"
 #include "bTree.hpp"
+#include <cassert>
 
 /*  << RecoverMsg Protocol >> */
 /*
@@ -32,6 +33,7 @@ public:
     void reset() {
         m_vBlocks.resize(0);
         m_type = OPT_TOT;
+        assert(m_vBlocks.empty());
     }
 
 /* getter & setter */
