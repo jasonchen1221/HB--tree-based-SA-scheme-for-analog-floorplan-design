@@ -75,3 +75,7 @@ double  Placer::getTTLWireLen() const{
     }
     return sum;
 }
+
+void Placer::writeRecord(){
+    
+}
