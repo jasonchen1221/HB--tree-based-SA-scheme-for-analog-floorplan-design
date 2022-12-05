@@ -15,11 +15,11 @@ int main(int argc, char* argv[]){
 
     //placer.place();
 
-    
-    
     // Testing initSol()
-    placer.initSol();
+    //placer.initSol();
     //placer.writeResult(argv[4]);
+
+    
 
 
     // Testing BTree and Contourlines
