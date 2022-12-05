@@ -167,3 +167,146 @@ void Placer::initPerturb(){
     m_T1 = ((double)uphillsum / (double)uphillcnt) / ((-1)*log(m_P));
     m_T  = m_T1 = 4;
 }
+
+void Placer::genNeighbor(){
+    m_recoverMsg->reset();
+
+    switch(rndSelectType()){
+        
+        case LEFT_ROTATE:       // 0
+            genLeftRotate();
+            break;
+        
+        case RIGHT_ROTATE:      // 1
+            genRightRotate();
+            break;
+
+        case DELETE_INSERT:     // 2 
+            genDeleteInsert();
+            break;
+
+        case SWAP_TWO_BLOCKS:   // 3
+            genSwapTwoBlocks();
+            break;
+
+        case ROTATE_BLOCK:      // 4
+            genRotateBlock();
+            break;
+
+        default:
+            assert(false);
+            break;
+    }
+
+    m_BTree->packing();
+
+    // update m_width & m_height after packing
+    m_Width  = m_BTree->getWidth();
+    m_Height = m_BTree->getHeight();  
+
+}
+
+PerturbType Placer::rndSelectType() const{
+    // 0 1 2 3 4
+    int r = ((rand() % 3)) + 2;     //2, 3, 4
+
+    if     (r == 0) return LEFT_ROTATE;
+    else if(r == 1) return RIGHT_ROTATE;
+    else if(r == 2) return DELETE_INSERT;
+    else if(r == 3) return SWAP_TWO_BLOCKS;
+    else if(r == 4) return ROTATE_BLOCK;
+    else { }
+
+    cerr << "Function: rndSelectType(): Something Wrong..." << endl;
+    assert(false);
+    return OPT_TOT;
+}
+
+/* ---------------------------------Perturbation Modes: Generate Neighbor--------------------------------- */ 
+
+void Placer::genLeftRotate(){
+    int n = rand() % m_vBlockList.size();   // random select a node on the tree
+    int c = 0;
+
+    while(m_vBlockList[n]->getRight() == nullptr){  // can not left rotate
+        if(++c > 10){
+            m_recoverMsg->setType(LEFT_ROTATE);
+            return;
+        }
+        n = rand() % m_vBlockList.size();   // random select another node on the tree
+    }
+
+    Block* r = m_vBlockList[n]->getRight();
+    m_BTree->leftRotateB(m_vBlockList[n]);
+
+    if(r != nullptr){   // add Block r into m_recoverMsg
+        m_recoverMsg->addBlk(m_vBlockList[n]->getParent());
+    }
+    
+    m_recoverMsg->setType(LEFT_ROTATE);
+    
+    cout << ">> LeftRotate " << m_vBlockList[n]->getName() << endl;
+}
+
+void Placer::genRightRotate(){
+    int n = rand() % m_vBlockList.size();
+    int c = 0;
+
+    while(m_vBlockList[n]->getLeft() == nullptr){  // can not right rotate
+        if(++c > 10){
+            m_recoverMsg->setType(RIGHT_ROTATE);
+            return;
+        }
+        n = rand() % m_vBlockList.size();   // random select another node on the tree
+    }
+
+    Block* l = m_vBlockList[n]->getLeft();
+    m_BTree->rightRotateB(m_vBlockList[n]);
+
+    if(l != nullptr){   // add Block l into m_recoverMsg
+        m_recoverMsg->addBlk(m_vBlockList[n]->getParent());
+    }
+
+    m_recoverMsg->setType(RIGHT_ROTATE);
+
+    cout << ">> RightRotate " << m_vBlockList[n]->getName() << endl;
+}
+
+void Placer::genDeleteInsert(){
+    // choose a random real node, to swap with random null node
+    int n = rand() % m_vBlockList.size();   
+
+    // add the chosen null block
+    m_recoverMsg->addBlk(m_BTree->deleteAndInsert(m_vBlockList[n]));
+    // add the chosen real block
+    m_recoverMsg->addBlk(m_vBlockList[n]);
+    m_recoverMsg->setType(DELETE_INSERT);
+
+    cout << ">> DeleteInsert " << m_vBlockList[n]->getName() << endl;
+}
+
+void Placer::genSwapTwoBlocks(){
+    int m = rand() % m_vBlockList.size();
+    int n = rand() % m_vBlockList.size();
+    while(m == n){
+        n = rand() % m_vBlockList.size();
+    }
+
+    m_BTree->swapBlk(m_vBlockList[m], m_vBlockList[n]);
+
+    m_recoverMsg->addBlk(m_vBlockList[m]);
+    m_recoverMsg->addBlk(m_vBlockList[n]);
+    m_recoverMsg->setType(SWAP_TWO_BLOCKS);
+   
+    cout << ">> Swap " << m_vBlockList[m]->getName() << " " << m_vBlockList[n]->getName() << endl;
+}
+
+void Placer::genRotateBlock(){
+    int n = rand() % m_vBlockList.size();
+    m_vBlockList[n]->rotate();
+
+    m_recoverMsg->addBlk(m_vBlockList[n]);
+    m_recoverMsg->setType(ROTATE_BLOCK);
+
+    cout << ">> Rotate " << m_vBlockList[n]->getName() << endl;
+}
