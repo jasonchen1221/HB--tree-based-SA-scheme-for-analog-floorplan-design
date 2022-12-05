@@ -74,13 +74,13 @@ private:
 };
 
 
-class BlockR {
+class BlockResult {
    friend class Placer;
 
 public:
-   BlockR(int x = 0, int y = 0, int w = 0, int h = 0):
-            m_x(x), m_y(y), m_width(w), m_height(h) {}
-   ~BlockR() {}
+   BlockResult(int x = 0, int y = 0, int w = 0, int h = 0):
+               m_x(x), m_y(y), m_width(w), m_height(h) {}
+   ~BlockResult() {}
 
 private:
    int m_x;
