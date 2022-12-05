@@ -13,18 +13,14 @@ int main(int argc, char* argv[]){
     // alpha, blkFile, netFile, outputFile
     placer.parseAll(argv[1], argv[2], argv[3]);     
 
-    placer.place();
+    //placer.place();
 
     
     
     // Testing initSol()
-/*    placer.initSol();
-    BTree* testBTree = placer.getBTree();
-    testBTree->printList();
-    testBTree->printTree();
-    testBTree->printContourLines();
-    placer.writeResult(argv[4]);
-*/
+    placer.initSol();
+    //placer.writeResult(argv[4]);
+
 
     // Testing BTree and Contourlines
 /*     BTree btree;
