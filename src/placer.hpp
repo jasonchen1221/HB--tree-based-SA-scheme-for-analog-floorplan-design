@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <float.h>
+#include <assert.h>
 
 class Placer{
 public:
@@ -46,11 +47,11 @@ public:
 
 /* Placer */
     void    place();
-    void    initPerturb();
     bool    isTimeout(const time_t&) const;
     void    initSol();
-    void    recover();
+    void    initPerturb();
     void    genNeighbor();
+    void    recover();
     void    updateCost(); // update _Anorm, _Wnorm, and _Cost
     bool    shinbwei() const; 
     void    rotateAll();
@@ -122,7 +123,7 @@ private:
     double             m_k;
     double             m_L; 
     double             m_N;
-    double             m_I; // #iter upper bound
+    double             m_I;     // #iter upper bound
     double             m_Width;
     double             m_Height;
     double             m_WireLen;

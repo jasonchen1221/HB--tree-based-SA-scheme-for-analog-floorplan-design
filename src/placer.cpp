@@ -95,5 +95,75 @@ void Placer::initSol(){
     m_BTree->packing();
 
     /* Initial Perturbation */
-    
+    initPerturb();
+
+    /* Initialize SA related arguments */
+    m_Cost = getCost();
+    m_optSol.resize(0);
+    m_uphill_sum        = 0;
+    m_uphill_avg_cnt    = 0;
+    m_delta_sum         = 0;
+    m_delta_cost_cnt    = 0;
+
+    m_T = T_INIT;           // 100000.0 (Inital temp.)
+    m_N = N_INIT;           // 0.0
+    m_P = P_INIT;           // 0.987 (Initial acceptance rate)
+    m_k = K_INIT;           // 7     (User specified)
+    //m_L = L_INIT;         // 200
+    m_L = m_vBlockList.size() * 2 + 10;     // # of neighbors to search in a iteration
+    m_C = C_INIT;           // 100   (User specified)
+    //m_I = ITER_LIMIT;     // 1000
+    m_I = m_vBlockList.size() * 20 + 10;    // # of iter upper bound
+
+    m_w = W_INIT;           // 0.5
+    m_x = X_INIT;           // 0.5 
+    m_y = Y_INIT;           // 0.0
+    m_z = Z_INIT;           // 0.0
+
+    /* Testing and debug */
+    m_BTree->printTree();
+    m_BTree->printList();
+    m_BTree->printInvList();
+    m_BTree->printContourLines();
+
+}
+
+void Placer::initPerturb(){
+    assert(m_BTree != nullptr);
+
+    m_Anorm = m_BTree->getArea();
+    m_Wnorm = getTTLWireLen();
+
+    m_w = W_INIT;   // 0.5
+    m_x = X_INIT;   // 0.5
+    m_y = Y_INIT;   // 0.0
+    m_z = Z_INIT;   // 0.0
+
+    double curCost      = 0;
+    double lastCost     = 0;
+    double delta        = 0;
+    double uphillsum    = 0;
+    double sumA         = 0;
+    double sumW         = 0;
+    int    uphillcnt    = 0;
+
+    for(int i = 0; i < INIT_PURTURB_NUM; ++i){  // 100
+        genNeighbor();
+        curCost = getCost();
+        delta = curCost - lastCost;
+        if(delta > 0){  // move worse
+            uphillsum += delta;
+            ++uphillcnt;
+        }
+        sumA     += getArea();
+        sumW     += getTTLWireLen();
+        lastCost  = curCost;
+    }
+
+    m_P     = P_INIT;                  // 0.987 (Initial acceptance rate)
+    m_Anorm = sumA / INIT_PURTURB_NUM;
+    m_Wnorm = sumW / INIT_PURTURB_NUM;
+
+    m_T1 = ((double)uphillsum / (double)uphillcnt) / ((-1)*log(m_P));
+    m_T  = m_T1 = 4;
 }
