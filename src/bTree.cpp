@@ -459,11 +459,9 @@ void BTree::packing(){
 
 
 /* -----------------------------B*-tree Perturbation Methods----------------------------- */
-/*
+
 void BTree::swapBlk(Block* blkA, Block* blkB){
-    if(blkA == nullptr && blkB == nullptr){
-        std::cerr << "error: function swapB, both blocks are nullptr" << std::endl;
-    }
+    assert(blkA != nullptr && blkB != nullptr);
 
     if(blkA == blkB->m_pParent){
         // blkA is blkB's parent
@@ -474,20 +472,24 @@ void BTree::swapBlk(Block* blkA, Block* blkB){
         connectSwap(blkB, blkA);
     }
     else if(blkA->m_pParent == blkB->m_pParent){
-        // blkA and blkB have same parent
+        // blkA and blkB have same parent (blkA & blkB are siblings)
         sameParentSwap(blkA, blkB);
     }
     else{
+        // blkA and blkB are not parent-child relationship, also not siblings
         generalSwap(blkA, blkB);
     }
 }
 
 void BTree::generalSwap(Block* blkA, Block* blkB){
+    // generalSwap: blkA and blkB are not parent-child relationship, also not siblings
+
     Block* A_parent = blkA->m_pParent;
     Block* A_left   = blkA->m_pLeft;
     Block* A_right  = blkA->m_pRight;
 
-    // replace blkA with blkB, and then raplace blkB with blkA
+    // replace blkB with blkA, and then raplace blkA with blkB
+
     // replace blkB with blkA
     blkA->m_pParent = blkB->m_pParent;
     blkA->m_pLeft   = blkB->m_pLeft;
@@ -521,7 +523,7 @@ void BTree::generalSwap(Block* blkA, Block* blkB){
     if(A_left != nullptr)
         A_left->m_pParent = blkB;
     if(A_right != nullptr)
-       A_right->m_pParent = blkB;
+        A_right->m_pParent = blkB;
     
     if(A_parent == m_dummyNode){
         m_dummyNode->m_pLeft = m_dummyNode->m_pRight = blkB;
@@ -551,15 +553,17 @@ void BTree::connectSwap(Block* parent, Block* child){
         parent->m_pParent = child;
 
         // set child
-        child->m_pParent = tmp_parent;
         child->m_pLeft   = parent;
         child->m_pRight  = tmp_right;
         if(tmp_right != nullptr) 
             tmp_right->m_pParent = child;
-        if(tmp_parent->m_pRight == parent)
-            tmp_parent->m_pRight = child;
-        else
+
+        child->m_pParent = tmp_parent;
+
+        if(parent == tmp_parent->m_pLeft)
             tmp_parent->m_pLeft = child;
+        else
+            tmp_parent->m_pRight= child;
     }
     else{   // isLeft == false  // child is parent's right child
         // set parent
@@ -572,15 +576,17 @@ void BTree::connectSwap(Block* parent, Block* child){
         parent->m_pParent = child;
         
         // set child
-        child->m_pParent = tmp_parent;
-        child->m_pLeft  = tmp_left;
         child->m_pRight = parent;
+        child->m_pLeft  = tmp_left;
         if(tmp_left != nullptr) 
             tmp_left->m_pParent = child;
-        if(tmp_parent->m_pRight == parent) 
-            tmp_parent->m_pRight = child;
+        
+        child->m_pParent = tmp_parent;
+        
+        if(parent == tmp_parent->m_pLeft) 
+            tmp_parent->m_pLeft = child;
         else                               
-            tmp_parent->m_pLeft  = child;
+            tmp_parent->m_pRight  = child;
     }
 
     if(tmp_parent == m_dummyNode){
@@ -590,18 +596,103 @@ void BTree::connectSwap(Block* parent, Block* child){
 }
 
 void BTree::sameParentSwap(Block* blkA, Block* blkB){
+    static bool isLeft; // true:  blkA is it's parent's left child
+                        // false: blkA is it's parent's right child
+
+    if(blkA == blkB) return;
+
+    if(blkA == blkA->m_pParent->m_pLeft) isLeft = true;
+    else                                 isLeft = false;
+
+    Block* A_parent = blkA->m_pParent;
+    Block* A_left   = blkA->m_pLeft;
+    Block* A_right  = blkA->m_pRight;
+
+    if(isLeft == true){
+        A_parent->m_pLeft  = blkB;
+        A_parent->m_pRight = blkA;
+    }
+    else{
+        A_parent->m_pLeft  = blkA;
+        A_parent->m_pRight = blkB;
+    }
+
+    blkA->m_pLeft  = blkB->m_pLeft;
+    blkA->m_pRight = blkB->m_pRight;
+    if(blkB->m_pLeft  != nullptr) blkB->m_pLeft->m_pParent = blkA;
+    if(blkB->m_pRight != nullptr) blkB->m_pRight->m_pParent = blkA;
+
+    blkB->m_pLeft  = A_left;
+    blkB->m_pRight = A_right;
+    if(A_left  != nullptr) A_left->m_pParent  = blkB;
+    if(A_right != nullptr) A_right->m_pParent = blkB;
 
 }
 
 void BTree::leftRotateB(Block* blk){
+    assert(blk != nullptr);
 
+    Block* y = blk->m_pRight;
+    if(y == nullptr) return;
+
+    blk->m_pRight = y->m_pLeft;
+
+    if(y->m_pLeft != nullptr){
+        y->m_pLeft->m_pParent = blk;
+    }
+
+    y->m_pParent = blk->m_pParent;
+
+    if(blk->m_pParent == m_dummyNode){
+        m_dummyNode->m_pRight = m_dummyNode->m_pLeft = y;
+        y->m_pParent = m_dummyNode;
+        m_root = y;
+    }
+    else if(blk == blk->m_pParent->m_pLeft){
+        blk->m_pParent->m_pLeft = y;
+    }
+    else{
+        blk->m_pParent->m_pRight = y;
+    }
+
+    y->m_pLeft = blk;
+    blk->m_pParent = y;
+    
 }
 
 void BTree::rightRotateB(Block* blk){
+    assert(blk != nullptr);
+
+    Block* y = blk->m_pLeft;
+    if(y == nullptr) return;
+
+    blk->m_pLeft = y->m_pRight;
+
+    if(y->m_pRight != nullptr){
+        y->m_pRight->m_pParent = blk;
+    }
+
+    y->m_pParent = blk->m_pParent;
+
+    if(blk->m_pParent == m_dummyNode){
+        m_dummyNode->m_pLeft = m_dummyNode->m_pRight = y;
+        y->m_pParent = m_dummyNode;
+        m_root = y;
+    }
+    else if(blk == blk->m_pParent->m_pLeft){
+        blk->m_pParent->m_pLeft = y;
+    }
+    else{
+        blk->m_pParent->m_pRight = y;
+    }
+
+    y->m_pRight = blk;
+    blk->m_pParent = y;
 
 }
 
 Block* BTree::deleteAndInsert(Block* blk){
-
+    int r = rand() % m_nulls.size();    // choose a null node on the tree
+    swapBlk(blk, m_nulls[r]);
+    return m_nulls[r];  // ruturen the chosen null block*
 }
-*/

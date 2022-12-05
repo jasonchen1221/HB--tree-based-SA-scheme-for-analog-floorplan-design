@@ -38,16 +38,16 @@ public:
     void play();
 
 /* Binary Tree Operations */
-    void insertT(Block* blk);  // Basic Tree Insertion (key comparison have to be decided)
-    void insertRnd(Block* blk);
-    void deleteT(Block* ptr);
-    void setRoot(Block* root, Block* left, Block* right);
-    void treeNodeDieCover(Block* die, Block* cover, bool kill);
-    void reset();
-    Block* treeMin(Block* ptr) const;
-    Block* treeMax(Block* ptr) const;
-    Block* treeSuccessor(Block* ptr) const;
-    Block* treePredeccessor(Block* ptr) const;
+    void    insertT(Block* blk);  // Basic Tree Insertion (key comparison have to be decided)
+    void    insertRnd(Block* blk);
+    void    deleteT(Block* ptr);
+    void    setRoot(Block* root, Block* left, Block* right);
+    void    treeNodeDieCover(Block* die, Block* cover, bool kill);
+    void    reset();
+    Block*  treeMin(Block* ptr) const;
+    Block*  treeMax(Block* ptr) const;
+    Block*  treeSuccessor(Block* ptr) const;
+    Block*  treePredeccessor(Block* ptr) const;
 
 /* Setters & Getters */
     void    setRoot(Block* b)               { m_root = b; }
@@ -65,13 +65,13 @@ public:
     void packing();
 
 /* B*-tree Perturbation Methods */
-    void swapBlk(Block* blkA, Block* blkB);
-    void generalSwap(Block* blkA, Block* blkB);
-    void connectSwap(Block* parent, Block* child);
-    void sameParentSwap(Block* blkA, Block* blkB);
-    void leftRotateB(Block* blk);
-    void rightRotateB(Block* blk);    
-    Block* deleteAndInsert(Block* blk); //ruturen the chosen null block*
+    void    swapBlk(Block* blkA, Block* blkB);
+    void    generalSwap(Block* blkA, Block* blkB);
+    void    connectSwap(Block* parent, Block* child);
+    void    sameParentSwap(Block* blkA, Block* blkB);
+    void    leftRotateB(Block* blk);
+    void    rightRotateB(Block* blk);    
+    Block*  deleteAndInsert(Block* blk); //ruturen the chosen null block*
 
 private:
     Block*                          m_dummyNode;
