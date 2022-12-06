@@ -77,5 +77,24 @@ double  Placer::getTTLWireLen() const{
 }
 
 void Placer::writeRecord(){
-    
+    assert(m_optSol.empty() == false);
+    assert(m_optSol.size() == m_vBlockList.size());
+    m_Width = 0;
+    m_Height = 0;
+
+    for(int i = 0; i < m_optSol.size(); ++i){
+        m_vBlockList[i]->m_x      = m_optSol[i].m_x;
+        m_vBlockList[i]->m_y      = m_optSol[i].m_y;
+        m_vBlockList[i]->m_width  = m_optSol[i].m_width;
+        m_vBlockList[i]->m_height = m_optSol[i].m_height;
+
+        if(m_vBlockList[i]->m_x + m_vBlockList[i]->m_width > m_Width){
+            m_Width = m_vBlockList[i]->m_x + m_vBlockList[i]->m_width;
+        }
+        if(m_vBlockList[i]->m_y + m_vBlockList[i]->m_height > m_Height){
+            m_Height = m_vBlockList[i]->m_y + m_vBlockList[i]->m_height;
+        }
+    }
+
+    assert( m_Width <= m_outlineW && m_Height <= m_outlineH);
 }
