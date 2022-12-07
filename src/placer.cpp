@@ -318,6 +318,7 @@ double Placer::T(int iter){
     }
     else if(iter > m_k){
         double newTemp = (m_T1 * abs(m_delta_sum / m_delta_cost_cnt) / m_N);
+        return newTemp;
     }
     else{
         assert(false);

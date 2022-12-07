@@ -93,11 +93,6 @@ void Placer::clear(){
     if(m_recoverMsg != nullptr) delete m_recoverMsg;
 }
 
-double  Placer::getRnd() const{
-    // only return 0.0000... ~ 0.9999...
-    return ((double)(rand() % RANDOM_RANGE) / RANDOM_RANGE);
-}
-
 void Placer::calTTLArea(){
     m_totalArea = 0;
     for(int i = 0; i < m_vBlockList.size(); ++i){
