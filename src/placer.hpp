@@ -90,6 +90,9 @@ public:
 
     BTree*  getBTree() { return m_BTree; }
 
+    //void    testRotateAll();
+    //vector<BlockResult> m_optSol_rotated;
+
 private:
 /* alpha */
     double m_alpha;

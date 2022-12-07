@@ -121,10 +121,10 @@ void Placer::initSol(){
     m_z = Z_INIT;           // 0.0
 
     /* Testing and debug */
-    m_BTree->printTree();
-    m_BTree->printList();
-    m_BTree->printInvList();
-    m_BTree->printContourLines();
+    //m_BTree->printTree();
+    //m_BTree->printList();
+    //m_BTree->printInvList();
+    //m_BTree->printContourLines();
 
 }
 
@@ -354,7 +354,7 @@ void Placer::genLeftRotate(){
     
     m_recoverMsg->setType(LEFT_ROTATE);
     
-    cout << ">> LeftRotate " << m_vBlockList[n]->getName() << endl;
+    //cout << ">> LeftRotate " << m_vBlockList[n]->getName() << endl;
 }
 
 void Placer::genRightRotate(){
@@ -378,7 +378,7 @@ void Placer::genRightRotate(){
 
     m_recoverMsg->setType(RIGHT_ROTATE);
 
-    cout << ">> RightRotate " << m_vBlockList[n]->getName() << endl;
+    //cout << ">> RightRotate " << m_vBlockList[n]->getName() << endl;
 }
 
 void Placer::genDeleteInsert(){
@@ -391,7 +391,7 @@ void Placer::genDeleteInsert(){
     m_recoverMsg->addBlk(m_vBlockList[n]);
     m_recoverMsg->setType(DELETE_INSERT);
 
-    cout << ">> DeleteInsert " << m_vBlockList[n]->getName() << endl;
+    //cout << ">> DeleteInsert " << m_vBlockList[n]->getName() << endl;
 }
 
 void Placer::genSwapTwoBlocks(){
@@ -407,7 +407,7 @@ void Placer::genSwapTwoBlocks(){
     m_recoverMsg->addBlk(m_vBlockList[n]);
     m_recoverMsg->setType(SWAP_TWO_BLOCKS);
    
-    cout << ">> Swap " << m_vBlockList[m]->getName() << " " << m_vBlockList[n]->getName() << endl;
+    //cout << ">> Swap " << m_vBlockList[m]->getName() << " " << m_vBlockList[n]->getName() << endl;
 }
 
 void Placer::genRotateBlock(){
@@ -417,5 +417,5 @@ void Placer::genRotateBlock(){
     m_recoverMsg->addBlk(m_vBlockList[n]);
     m_recoverMsg->setType(ROTATE_BLOCK);
 
-    cout << ">> Rotate " << m_vBlockList[n]->getName() << endl;
+    //cout << ">> Rotate " << m_vBlockList[n]->getName() << endl;
 }
