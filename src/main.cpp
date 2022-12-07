@@ -13,14 +13,17 @@ int main(int argc, char* argv[]){
     // alpha, blkFile, netFile, outputFile
     placer.parseAll(argv[1], argv[2], argv[3]);     
 
-    //placer.place();
+    placer.place();
+
+    placer.writeResult(argv[4]);
+
+    time_t endTime = clock();
+    double t_used = (double)(endTime - startTime) / CLOCKS_PER_SEC;
+    cout << ">> Running Time: " << t_used << " sec." << endl;
 
     // Testing initSol()
     //placer.initSol();
     //placer.writeResult(argv[4]);
-
-    
-
 
     // Testing BTree and Contourlines
 /*     BTree btree;
