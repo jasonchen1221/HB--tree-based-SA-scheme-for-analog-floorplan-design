@@ -62,4 +62,4 @@ results.o: ${SOURCE}/results.cpp
 	g++ -c -fPIC ${SOURCE}/results.cpp ${PYBIND_INCLUDEDS} -o results.o
 
 clean:
-	rm -rf *.o *.so
+	rm -rf *.o *.so __pycache__
