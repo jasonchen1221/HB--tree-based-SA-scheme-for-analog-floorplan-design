@@ -6,7 +6,7 @@ using std::endl;
 time_t startTime;
 
 int main(int argc, char* argv[]){
-    
+/*   
     startTime = clock();
     
     Placer placer;
@@ -21,12 +21,14 @@ int main(int argc, char* argv[]){
     double t_used = (double)(endTime - startTime) / CLOCKS_PER_SEC;
     cout << ">> Running Time: " << t_used << " sec." << endl;
 
-    // Testing initSol()
-    //placer.initSol();
-    //placer.writeResult(argv[4]);
+*/
+
 
     // Testing BTree and Contourlines
-/*     BTree btree;
+    BTree btree;
+    btree.reset();
+    //btree.printTree();
+    //btree.printList();
 
     Block* blk_1 = new Block; blk_1->setName("b1"); blk_1->setW(5); blk_1->setH(3);
     Block* blk_2 = new Block; blk_2->setName("b2"); blk_2->setW(7); blk_2->setH(2);
@@ -71,6 +73,7 @@ int main(int argc, char* argv[]){
          << btree.getRoot()->getW() << " "
          << btree.getRoot()->getH() << endl;
 
+
     // ContourLines will be set when packing
     cout << "----------Packing----------" << endl;
     btree.packing();
@@ -81,6 +84,40 @@ int main(int argc, char* argv[]){
     cout << "b2: " << blk_2->getX() << "," << blk_2->getY() << endl; 
     cout << "b3: " << blk_3->getX() << "," << blk_3->getY() << endl; 
     cout << "b4: " << blk_4->getX() << "," << blk_4->getY() << endl; 
+/*
+    // test: generalSwap
+    cout << "----------generalSwap----------" << endl;
+    btree.generalSwap(blk_1, blk_3);
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+    //btree.packing();
+    //btree.printContourLines();
+    
+    // test: connectSwap
+    cout << "----------connectSwap----------" << endl;
+    btree.connectSwap(blk_3, blk_2);
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+
+    // test: sameParentSwap
+    cout << "----------sameParentSwap----------" << endl;
+    btree.sameParentSwap(blk_4, blk_3);
+    cout << "Print Tree: " << endl;
+    btree.printTree();
+    cout << "Print Tree List: " << endl;
+    btree.printList();
+
+    // test: leftRotateB
+
+    // test: rightRotateB
 */
+
+    vector<Block*> testVec{ blk_1, blk_2, blk_3, blk_4 };
+    btree.dumpCaseResult(testVec);
+
     return 0;
 }
