@@ -1,5 +1,6 @@
 *.o
 *.exe
+*.so
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
