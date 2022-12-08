@@ -73,6 +73,9 @@ public:
     void    rightRotateB(Block* blk);    
     Block*  deleteAndInsert(Block* blk); //ruturen the chosen null block*
 
+/* B*-Tree write results */
+    void    dumpCaseResult(vector<Block*> v_blks);
+
 private:
     Block*                          m_dummyNode;
     Block*                          m_root;

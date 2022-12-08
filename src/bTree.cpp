@@ -1,6 +1,7 @@
 #include "../headers/bTree.hpp"
 
 #include <assert.h>
+#include <fstream>
 
 /* --------------------------------Debugging Functions-------------------------------- */
 void BTree::printTree() const{
@@ -695,4 +696,27 @@ Block* BTree::deleteAndInsert(Block* blk){
     int r = rand() % m_nulls.size();    // choose a null node on the tree
     swapBlk(blk, m_nulls[r]);
     return m_nulls[r];  // ruturen the chosen null block*
+}
+
+void BTree::dumpCaseResult(vector<Block*> v_blks){
+    std::cout << "Start writing B*Tree results..." << std::endl;
+
+    std::ofstream os;
+    os.open("packing.txt");
+
+    os << "0" << std::endl;
+    os << "0" << std::endl;
+    os << "0" << std::endl;
+    os << getWidth() << " " << getHeight() << std::endl;
+    os << "0" << std::endl;
+
+    for(int i = 0; i < v_blks.size(); ++i){
+        os << v_blks[i]->getName() << " "
+           << v_blks[i]->getX() << " "
+           << v_blks[i]->getY() << " "
+           << (v_blks[i]->getX() + v_blks[i]->getW()) << " "
+           << (v_blks[i]->getY() + v_blks[i]->getH()) << std::endl;
+    }
+
+    std::cout << "Start writing B*Tree results...[Finished]" << std::endl;
 }
