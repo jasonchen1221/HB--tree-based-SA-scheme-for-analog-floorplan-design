@@ -74,7 +74,7 @@ public:
     Block*  deleteAndInsert(Block* blk); //ruturen the chosen null block*
 
 /* B*-Tree write results */
-    void    dumpCaseResult(vector<Block*> v_blks);
+    void    dumpCaseResult(vector<Block*> v_blks, std::string flag);
 
 private:
     Block*                          m_dummyNode;
