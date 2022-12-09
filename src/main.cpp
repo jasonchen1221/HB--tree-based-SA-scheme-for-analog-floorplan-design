@@ -6,7 +6,7 @@ using std::endl;
 time_t startTime;
 
 int main(int argc, char* argv[]){
-/*   
+ 
     startTime = clock();
     
     Placer placer;
@@ -21,9 +21,8 @@ int main(int argc, char* argv[]){
     double t_used = (double)(endTime - startTime) / CLOCKS_PER_SEC;
     cout << ">> Running Time: " << t_used << " sec." << endl;
 
-*/
 
-
+/*
     // Testing BTree and Contourlines
     BTree btree;
     btree.reset();
@@ -84,7 +83,7 @@ int main(int argc, char* argv[]){
     cout << "b2: " << blk_2->getX() << "," << blk_2->getY() << endl; 
     cout << "b3: " << blk_3->getX() << "," << blk_3->getY() << endl; 
     cout << "b4: " << blk_4->getX() << "," << blk_4->getY() << endl; 
-/*
+
     // test: generalSwap
     cout << "----------generalSwap----------" << endl;
     btree.generalSwap(blk_1, blk_3);
@@ -114,10 +113,10 @@ int main(int argc, char* argv[]){
     // test: leftRotateB
 
     // test: rightRotateB
-*/
+
 
     vector<Block*> testVec{ blk_1, blk_2, blk_3, blk_4 };
     btree.dumpCaseResult(testVec);
-
+*/
     return 0;
 }
