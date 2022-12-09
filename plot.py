@@ -26,7 +26,8 @@ def readfile_and_plot(fileName):
     ax.grid(which = 'major', axis = 'both')
     plt.rc('font', size = 7)
 
-    ax.plot([0], [0])
+    #ax.plot([0], [0])  # grid: dynamic change with chipsize
+    ax.plot(25, 25)     # grid: set as fixed x = 0~25 ; y = 0~25
 
     # skip final cost
     file.readline()
@@ -36,8 +37,8 @@ def readfile_and_plot(fileName):
     file.readline()
     # chip width & chip height
     chipW, chipH = file.readline().split()
-    chipW = int(chipW)
-    chipH = int(chipH)
+    chipW = float(chipW)
+    chipH = float(chipH)
 
     ax.plot(chipW, chipH, 'g*')     # tap green star on chip's top right corner
     plt.text(chipW, chipH, '({}, {})'.format(chipW, chipH))
@@ -50,10 +51,10 @@ def readfile_and_plot(fileName):
     y_list = []
     for thisLine in list(file):
         name, x1, y1, x2, y2 = thisLine.split()
-        x1 = int(x1)
-        y1 = int(y1)
-        x2 = int(x2)
-        y2 = int(y2)
+        x1 = float(x1)
+        y1 = float(y1)
+        x2 = float(x2)
+        y2 = float(y2)
         
         x_list.extend([x1])
         y_list.extend([y1])
