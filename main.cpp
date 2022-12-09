@@ -15,7 +15,9 @@ PYBIND11_MODULE(_Placer, m){
         .def("setW",    &Block::setW)
         .def("setH",    &Block::setH)
         .def("getX",    &Block::getX)
-        .def("getY",    &Block::getY);
+        .def("getY",    &Block::getY)
+        .def("rotate",  &Block::rotate)
+        ;
     
     py::class_<BTree>(m, "BTree")
         .def(py::init<size_t>())
@@ -33,5 +35,16 @@ PYBIND11_MODULE(_Placer, m){
         .def("dumpCaseResult",   &BTree::dumpCaseResult)
         ;
 
+    py::class_<Placer>(m, "Placer")
+        .def(py::init())
+        .def("parseAll",        &Placer::parseAll)
+        .def("place",           &Placer::place)
+        .def("writeResult",     &Placer::writeResult)
+        .def("getFinalCost",    &Placer::getFinalCost)
+        .def("getTTLWireLen",   &Placer::getTTLWireLen)
+        .def("getArea",         &Placer::getArea)
+        .def("getWidth",        &Placer::getWidth)
+        .def("getHeight",       &Placer::getHeight)
+        ;
     ;
 }
