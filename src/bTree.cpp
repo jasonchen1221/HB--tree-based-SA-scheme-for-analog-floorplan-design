@@ -1,4 +1,4 @@
-#include "bTree.hpp"
+#include "../headers/bTree.hpp"
 
 #include <assert.h>
 #include <fstream>
@@ -698,11 +698,11 @@ Block* BTree::deleteAndInsert(Block* blk){
     return m_nulls[r];  // ruturen the chosen null block*
 }
 
-void BTree::dumpCaseResult(vector<Block*> v_blks){
+void BTree::dumpCaseResult(vector<Block*> v_blks, std::string flag){
     std::cout << "Start writing B*Tree results..." << std::endl;
 
     std::ofstream os;
-    os.open("packing.txt");
+    os.open("results/packing_" + flag + ".txt");
 
     os << "0" << std::endl;
     os << "0" << std::endl;

@@ -1,4 +1,4 @@
-#include "block.hpp"
+#include "../headers/block.hpp"
 
 Block::Block(): 
     m_name("undefined_name"), m_x(0), m_y(0),

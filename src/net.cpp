@@ -1,4 +1,4 @@
-#include "net.hpp"
+#include "../headers/net.hpp"
 
 Net::Net(){
     m_vBlks.resize(0);

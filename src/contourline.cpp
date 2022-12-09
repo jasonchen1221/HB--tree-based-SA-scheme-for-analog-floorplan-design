@@ -1,4 +1,4 @@
-#include "contourline.hpp"
+#include "../headers/contourline.hpp"
 #include <cassert>
 #include <iostream>
 
