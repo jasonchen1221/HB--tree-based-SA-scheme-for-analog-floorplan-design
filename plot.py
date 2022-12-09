@@ -75,8 +75,7 @@ def readfile_and_plot(fileName):
     plt.savefig(plotName)
     print('[Finished] Plot ' + plotName)
 
-
-if __name__ == '__main__':
+def main():
     directory = 'results'
     for fileName in os.listdir(directory):
         file = os.path.join(directory, fileName)
@@ -84,3 +83,9 @@ if __name__ == '__main__':
         if(os.path.isfile(file)):
             print("Current File: " + file)
             readfile_and_plot(file)
+
+def __init__(self):
+    print("Enter plot.py __init__()")
+
+if __name__ == '__main__': main()
+    
