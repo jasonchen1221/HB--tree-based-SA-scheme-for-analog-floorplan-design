@@ -90,7 +90,7 @@ def test_SAPlacement():
     #print("> On the case: ", "")
     tStart = time.process_time()
 
-    alpha = "0.1"
+    alpha = "0.5"
     inDirectory = "./examples/"
     blkCaseList = list(["0.block", "ami33.block", "ami49.block", "apte.block", "hp.block", "xerox.block"])
     netCaseList = list(["0.nets",  "ami33.nets",  "ami49.nets",  "apte.nets",  "hp.nets",  "xerox.nets" ])
@@ -110,8 +110,34 @@ def test_SAPlacement():
 
 
 def test_performance():
-    print("> Start testing performance")
+    print(">> Start testing performance")
+    
+    alphaList = list(["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9"])
+    inDirectory = "./examples/"
+    blkCaseList = list(["0.block", "ami33.block", "ami49.block", "apte.block", "hp.block", "xerox.block"])
+    netCaseList = list(["0.nets",  "ami33.nets",  "ami49.nets",  "apte.nets",  "hp.nets",  "xerox.nets" ])
 
+    outDirectory = "./performance/"
+    outCaseList = list(["0.txt",   "ami33.txt",   "ami49.txt",   "apte.txt",   "hp.txt",   "xerox.txt" ])
+
+    with open(outDirectory + "perf_" + outCaseList[2], "w") as fh:
+        for alpha in alphaList:
+            tStart = time.process_time()
+            placer = _Placer.Placer()
+            placer.parseAll(alpha, inDirectory+blkCaseList[2], inDirectory+netCaseList[2])
+            placer.place()
+            tUsed = time.process_time() - tStart
+
+            fh.write(f'Alpha = {alpha}\n')
+            fh.write(f'Final Cost       = {placer.getFinalCost()}\n')
+            fh.write(f'Total Wirelength = {placer.getTTLWireLen()}\n')
+            fh.write(f'Total Area       = {placer.getArea()}\n')
+            fh.write(f'Chip Width       = {placer.getWidth()}\n')
+            fh.write(f'Chip Height      = {placer.getHeight()}\n')
+            fh.write(f'Time Used        = {tUsed}\n')
+            fh.write(f'-----------------------------------------------------------------------\n')
+
+    print(">> The performance is written in file: performance")
 
 def main():
     #test_treeOptPack()
