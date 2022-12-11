@@ -9,3 +9,4 @@ __pycache__
 !.vscode/extensions.json
 figures/*
 results/*
+performance/*
